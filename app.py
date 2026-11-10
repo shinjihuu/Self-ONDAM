@@ -11,7 +11,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from core import ai, eligibility as el, finance as fin, household as hh, ui
+from core import ai, benefits as bf, eligibility as el, finance as fin, household as hh, ui
 from core.agents.recommender import RecommenderAgent
 from core.ui import COLORS, SERIES, esc
 
@@ -154,16 +154,18 @@ def diagnosis_form() -> None:
                         '<span style="font-weight:500;font-size:.85rem;color:#8C7B73">· 본인 기준 월 금액(원)</span></div>',
                         unsafe_allow_html=True)
             a, b = st.columns(2)
+            inc_init = pd.DataFrame(p["income_items"], columns=["name", "amount", "kind"])
+            inc_init["kind"] = inc_init["kind"].fillna(bf.INCOME_KINDS[0])
             inc_df = a.data_editor(
-                pd.DataFrame(p["income_items"]), num_rows="dynamic", width="stretch", key="ed_inc",
+                inc_init, num_rows="dynamic", width="stretch", key="ed_inc",
                 column_config={"name": st.column_config.TextColumn("월 수입 항목", width="medium"),
                                "amount": st.column_config.NumberColumn("금액(원)", min_value=0, step=10000, format="%d"),
-                               "source": st.column_config.TextColumn("근거", width="small")})
+                               "kind": st.column_config.SelectboxColumn("종류", options=bf.INCOME_KINDS, required=True,
+                                                                        help="장애인연금 판정 시 근로소득은 공제 후 반영되고, 연금·수당은 소득으로 보지 않아요")})
             exp_cols = {"name": st.column_config.TextColumn("월 지출 항목", width="medium"),
                         "amount": st.column_config.NumberColumn("금액(원)", min_value=0, step=10000, format="%d"),
-                        "source": st.column_config.TextColumn("근거", width="small"),
                         "ends_on_job": st.column_config.CheckboxColumn("취업 시 종료")}
-            exp_init = pd.DataFrame(p["expense_items"])
+            exp_init = pd.DataFrame(p["expense_items"], columns=["name", "amount", "ends_on_job"])
             if "ends_on_job" not in exp_init:
                 exp_init["ends_on_job"] = False
             exp_init["ends_on_job"] = exp_init["ends_on_job"].fillna(False).astype(bool)
@@ -173,6 +175,29 @@ def diagnosis_form() -> None:
             savings = a.number_input("본인 명의 보유 저축액(원)", 0, 10**10, p["savings"], step=100000)
             fam = b.number_input("가족이 매달 모아주는 자립자금(원)", 0, 10**8, p.get("family_monthly_saving", 0), step=10000,
                                  help="AFPK 사례: 현금흐름표 ‘자녀 자립자금 적립’ 연 240만 원 = 월 20만 원")
+
+        with st.container(border=True):
+            st.markdown('<div class="card-title"><div class="ico soft-sky">🧾</div>지원금 계산 정보 '
+                        '<span style="font-weight:500;font-size:.85rem;color:#8C7B73">· 제도별 해당 여부와 월 지원액을 정확히 계산하는 데 써요</span></div>',
+                        unsafe_allow_html=True)
+            a, b, c = st.columns(3)
+            level = a.selectbox("가구 소득 구분", bf.INCOME_LEVELS, bf.INCOME_LEVELS.index(p.get("income_level", bf.INCOME_LEVELS[-1])),
+                                help="기초생활수급·차상위 여부 (주민센터 확인). 장애인연금 부가급여·장애수당·활동지원 본인부담이 달라져요")
+            areas = list(bf.PARAMS_2026["pension"]["basic_property"])
+            area = b.selectbox("재산 공제 지역", areas, areas.index(p.get("area_type") or bf.area_type(p["region"])),
+                               help="특별·광역시 = 대도시, 시 = 중소도시, 군 = 농어촌 (기본재산 공제액이 달라요)")
+            spouse = c.toggle("배우자 있음", p.get("has_spouse", False), help="장애인연금은 본인과 배우자의 소득·재산만 봐요 (부모 소득은 보지 않아요)")
+            a, b, c = st.columns(3)
+            prop = a.number_input("본인 일반재산(원)", 0, 10**11, int(p.get("property_general", 0)), step=1_000_000,
+                                  help="본인 명의 주택·토지·전월세 보증금·자동차 등")
+            debt = b.number_input("본인 부채(원)", 0, 10**11, int(p.get("debt", 0)), step=1_000_000)
+            sp_inc = c.number_input("배우자 월 소득(원)", 0, 10**9, int(p.get("spouse_income", 0)), step=10000, disabled=not spouse)
+            a, b = st.columns(2)
+            bands = bf.MEDIAN_BANDS
+            band = a.selectbox("활동지원 소득 구간 (일반 가구)", bands, bands.index(p.get("median_band", bands[1])),
+                               help="활동지원 본인부담률: 70% 이하 4% · 120% 이하 6% · 180% 이하 8% · 초과 10%")
+            act_b = b.number_input("활동지원 월 급여액(원, 결정통지서)", 0, 20_000_000, int(p.get("activity_benefit", 0)), step=10000,
+                                   help="본인부담금 = 월 급여액 × 구간 비율 (상한 216,200원)")
 
         with st.container(border=True):
             st.markdown('<div class="card-title"><div class="ico soft-butter">🎯</div>재무목표</div>', unsafe_allow_html=True)
@@ -185,8 +210,8 @@ def diagnosis_form() -> None:
         submitted = st.form_submit_button("💾 저장하고 다시 분석하기", type="primary", width="stretch")
 
     if submitted:
-        inc_df = inc_df.dropna(subset=["name"]).fillna({"amount": 0, "source": ""})
-        exp_df = exp_df.dropna(subset=["name"]).fillna({"amount": 0, "source": "", "ends_on_job": False})
+        inc_df = inc_df.dropna(subset=["name"]).fillna({"amount": 0, "kind": bf.INCOME_KINDS[0]})
+        exp_df = exp_df.dropna(subset=["name"]).fillna({"amount": 0, "ends_on_job": False})
         p.update(dict(
             name=name, age=int(age), region=region, disability_type=dtype, severity=severity,
             registered=registered, employment=employment, care_need=care, using_programs=using, job_goal=job_goal,
@@ -194,6 +219,8 @@ def diagnosis_form() -> None:
             monthly_income=int(inc_df["amount"].sum()), monthly_expense=int(exp_df["amount"].sum()),
             savings=int(savings), family_monthly_saving=int(fam), goal_year=int(goal_year),
             goal_amount=int(goal_amount), monthly_saving_wish=int(wish), parent_living_support=int(pls),
+            income_level=level, area_type=area, has_spouse=spouse, property_general=int(prop), debt=int(debt),
+            spouse_income=int(sp_inc) if spouse else 0, median_band=band, activity_benefit=int(act_b),
         ))
         for k in [k for k in st.session_state if k.startswith(("sel_", "sim_"))]:
             del st.session_state[k]
@@ -327,6 +354,28 @@ def cached_explain(profile_json: str, program_id: str, rec_json: str) -> tuple[s
                                      SimpleNamespace(**json.loads(rec_json)))
 
 
+def amount_banner(r, prog: dict) -> None:
+    """제도 카드 상단: 해당 여부 + 2026년 기준 월 지원액 (계산 과정 펼쳐보기)."""
+    paren = r.amount_label[r.amount_label.find("(") + 1:].rstrip(")") if "(" in r.amount_label else r.amount_label
+    if r.amount:
+        head = f"💰 월 <b>{r.amount:,}원</b> 예상"
+        tone, sub = "#EEF8F3", paren + " · 2026년 기준"
+    elif r.copay or (r.amount_label and prog["support_type"] == "care"):
+        head = f"🧾 현금 지원 없음 · 본인부담 <b>월 {r.copay:,}원</b>" if r.copay else "🧾 본인부담 계산 필요"
+        tone, sub = "#F4EFFB", paren
+    elif r.status == el.NO_MATCH:
+        head, tone, sub = "🚫 지금은 해당되지 않아요", "#F3EEEA", (r.checks[0] if r.checks else "")
+    else:
+        head, tone, sub = "ℹ️ 지원 형태", "#FFF8E1", prog.get("amount_info", "")
+    st.markdown(f'<div style="background:{tone};border-radius:14px;padding:10px 14px;margin:2px 0 10px;display:flex;'
+                f'gap:12px;align-items:center;flex-wrap:wrap"><span style="font-size:1.02rem">{head}</span>'
+                f'<span style="font-size:.84rem;color:#6B5A52">{esc(sub)}</span></div>', unsafe_allow_html=True)
+    if r.amount_steps:
+        with st.expander("🧮 계산 과정 보기 (2026년 기준)"):
+            st.markdown("\n".join(f"{i}. {esc(x)}" for i, x in enumerate(r.amount_steps, 1)))
+            st.caption("출처: 보건복지부 2026년 장애인연금·활동지원 기준 고시·안내. 실제 금액은 주민센터 소득·재산 조사 후 확정돼요.")
+
+
 def agent_panel() -> None:
     """수집 에이전트 → 추천 에이전트 흐름과 현재 데이터 상태."""
     meta = CATALOG_INFO["collected_meta"]
@@ -421,6 +470,7 @@ def page_support() -> None:
                         f'{esc(prog["name"])} <span style="margin-left:6px">{badges}</span>'
                         f'<span style="margin-left:auto;font-size:.8rem;color:#8C7B73;font-weight:500">{agency}</span></div>',
                         unsafe_allow_html=True)
+            amount_banner(r, prog)
             left, right = st.columns([1.35, 1], gap="large")
             with left:
                 with st.spinner("AI가 추천 이유를 정리하고 있어요..."):
@@ -455,7 +505,7 @@ def page_support() -> None:
             ui.note("⚠️ " + esc(w), "warm")
     ui.note("ⓘ " + esc(CATALOG_INFO["notice"]), "lav")
 
-    ui.section("AI 길잡이에게 물어보기", "lav_dark", "공식 안내 자료 범위 안에서 답해요")
+    ui.section("AI 길잡이에게 물어보기", "lav_dark", "제도·돈 관리·상속·후견·세금 무엇이든 물어보세요")
     hist = st.session_state.setdefault("qa_history", [])
     for q, a, by_ai in hist[-6:]:
         with st.chat_message("user", avatar="🙋"):
@@ -464,7 +514,9 @@ def page_support() -> None:
             st.markdown(a)
             if not by_ai:
                 st.caption("규칙 기반 답변 (AI 연결 시 더 자세히 답해요)")
-    ex = ["장애인연금은 취업하면 어떻게 돼요?", "주간활동서비스 신청은 어디서 해요?", "근로지원인은 언제 신청할 수 있어요?"]
+            else:
+                st.caption(f"🤖 {by_ai} · 법률·세금 내용은 일반 정보예요. 실제 결정 전 전문가와 확인하세요.")
+    ex = ["발달장애인 자녀 상속은 어떻게 준비해요?", "취업하면 장애인연금은 얼마가 돼요?", "부모가 돌볼 수 없게 되면 후견은 어떻게 해요?"]
     ec = st.columns(3)
     preset = None
     for i, e in enumerate(ex):
@@ -524,8 +576,11 @@ def page_simulator() -> None:
             with st.container(border=True):
                 st.markdown(head, unsafe_allow_html=True)
                 if prog["support_type"] == "cash":
+                    est = bf.estimate_for(pid, p)
                     if in_use:
-                        st.caption("✔ 수급 중인 금액이 이미 ‘월 수입’에 반영되어 있어요. (중복으로 더하지 않아요)")
+                        cur = next((i["amount"] for i in p["income_items"] if prog["name"].split(" ")[0] in i["name"]), 0)
+                        st.caption(f"✔ 수급 중인 월 {cur:,}원이 이미 ‘월 수입’에 반영되어 있어요. (중복으로 더하지 않아요)"
+                                   + (f" · 2026년 기준 계산값: {est.label}" if est and est.eligible else ""))
                         if st.checkbox("⚠️ 수급이 중단되는 경우도 보기 (소득인정액 변화 등)", key=f"sim_stop_{pid}"):
                             amt = next((i["amount"] for i in p["income_items"] if prog["name"] in i["name"]), prog["default_amount"])
                             off = st.slider("몇 개월 뒤 중단된다고 가정할까요?", 0, months, min(24, months), key=f"sim_stopoff_{pid}")
@@ -533,7 +588,12 @@ def page_simulator() -> None:
                             assumed_names.append(f"{prog['name']} {off}개월 후 중단")
                     else:
                         a, b, c = st.columns(3)
-                        amt = a.number_input("가정한 월 지원액(원)", 0, 2_000_000, prog["default_amount"], 10000, key=f"sim_amt_{pid}")
+                        default_amt = est.monthly if est and est.eligible else prog["default_amount"]
+                        if est and est.eligible:
+                            st.caption(f"🧮 2026년 기준 계산값 **{est.label}** 을(를) 기본값으로 넣었어요.")
+                        elif est and est.eligible is False:
+                            st.caption(f"🚫 현재 조건에서는 해당되지 않아요 ({est.label}). 아래 금액은 가정으로만 계산돼요.")
+                        amt = a.number_input("월 지원액(원)", 0, 2_000_000, default_amt, 10000, key=f"sim_amt_{pid}")
                         off = b.number_input("몇 개월 뒤부터", 0, months, 3, key=f"sim_off_{pid}",
                                              help="신청·심사 기간을 고려해 지급 시작 시점을 정해요")
                         dur = c.selectbox("지급 기간", ["계속 지급 가정", "12개월", "24개월", "36개월"], key=f"sim_dur_{pid}")
@@ -577,10 +637,27 @@ def page_simulator() -> None:
             end = e.number_input("끝나는 지출(원)", 0, 3_000_000, ended_default, 10_000, key="sim_end",
                                  help="취업하면 더 이상 내지 않는 비용 (예: 직업훈련비)")
             joff = fin.months_between(TODAY.year, TODAY.month, int(jy), int(jm))
-            job = fin.JobAssumption(joff, int(sal), int(ext), int(end))
-            if "disability_pension" in p["using_programs"]:
-                ui.note("⚠️ 취업 후 근로소득이 생기면 장애인연금 소득인정액이 달라져요. 근로소득은 공제 후 반영되지만, "
-                        "수급 변화를 보려면 위 ‘수급이 중단되는 경우도 보기’를 함께 켜 보세요.", "warm")
+            change = 0
+            pen_selected = "disability_pension" in selected
+            if pen_selected and p.get("severity") == "심한 장애":
+                earned_now, _ = bf._income_by_kind(p)
+                before = bf.pension_estimate(p)
+                after = bf.pension_estimate(p, earned_override=earned_now + int(sal))
+                if "disability_pension" in p["using_programs"]:
+                    base_amt = next((i["amount"] for i in p["income_items"] if "장애인연금" in i["name"]), before.monthly)
+                else:
+                    base_amt = int(st.session_state.get("sim_amt_disability_pension", before.monthly))
+                change = after.monthly - base_amt
+                ri_after, _ = bf.recognized_income(p, earned_override=earned_now + int(sal))
+                if change == 0:
+                    ui.note(f"✅ 취업 후 소득인정액은 월 {ri_after:,}원으로 선정기준(단독 140만 원) 이하라, "
+                            f"장애인연금 월 {after.monthly:,}원이 <b>그대로 유지</b>될 것으로 계산돼요. "
+                            "(근로소득은 95만 원 공제 후 70%만 반영)", "mint")
+                else:
+                    ui.note(f"⚠️ 취업 후 소득인정액이 월 {ri_after:,}원이 되어 장애인연금이 "
+                            f"<b>월 {base_amt:,}원 → {after.monthly:,}원</b>으로 바뀌는 것으로 계산했어요 ({after.label}). "
+                            "취업 시나리오에 자동 반영돼요.", "warm")
+            job = fin.JobAssumption(joff, int(sal), int(ext), int(end), change)
 
     df = fin.project_cashflow(TODAY.year, TODAY.month, months, p["monthly_income"], p["monthly_expense"], supports, job)
     steady_after = max([s.start_offset for s in supports if s.amount > 0] + [0])
@@ -818,36 +895,69 @@ def page_simulator() -> None:
         ("취업 시", "주간활동서비스 이용 제한 여부 확인 → 근로지원인 신청 검토"),
         ("취업 후 6개월", "실제 급여·지출로 시뮬레이션 다시 하기, 저축액 조정"),
         ("적금 만기마다", "만기금을 자립자금 계좌로 재예치, 비과세 한도(5,000만 원) 확인"),
-        ("2031년", "아버지 퇴직 — 가족 적립(월 20만 원) 지속 가능 여부 재점검"),
-    ]
+    ] + ([("2031년", "아버지 퇴직 — 가족 적립(월 20만 원) 지속 가능 여부 재점검")] if st.session_state.household else [])
     st.markdown('<div class="card">' + "".join(
         f'<div style="display:flex;gap:14px;padding:8px 0;border-bottom:1px dashed #F1E2D6">'
         f'<span class="badge b-care" style="min-width:96px;text-align:center">{w}</span><span>{esc(t)}</span></div>'
         for w, t in checks) + "</div>", unsafe_allow_html=True)
 
-    report = make_report(p, summary, plans, period, supports)
-    c1, c2, c3 = st.columns([1, 2, 1])
+    data = make_report_data(p, selected, dict(
+        before=before_m, after=after_m, job=job_m, horizons=ht, assumptions=assumed_names),
+        plans, period, int(save),
+        dict(year=p["goal_year"], balance=int(final["balance"]), target=p["goal_amount"], family_only=int(base_only),
+             interest=int(final["interest"]), need_self=need_self),
+        dict(period=f"{p['goal_year']}~{p['goal_year'] + max(yrs, 1) - 1}", income_parts=inc_parts, living=int(living), diff=int(diff)),
+        checks)
+    c1, c2, c3 = st.columns([1, 1.6, 1.4])
     c1.button("← AI 맞춤 지원", on_click=go_page, args=(1,), width="stretch")
-    c3.download_button("📄 내 자립설계 요약 받기", report, file_name="자립ON_자립설계_요약.md", mime="text/markdown",
-                       type="primary", width="stretch")
+    try:
+        pdf_bytes = build_pdf_cached(json.dumps(data, ensure_ascii=False, default=str))
+        c3.download_button("📄 자립설계 요약 PDF 받기", pdf_bytes, file_name=f"JaripON_report_{date.today():%Y%m%d}.pdf",
+                           mime="application/pdf", type="primary", width="stretch")
+    except Exception as e:  # PDF 생성 실패 시에도 화면은 계속 동작
+        c3.error(f"PDF를 만들지 못했어요: {e}")
 
 
-def make_report(p: dict, s: dict, plans, period: int, supports) -> str:
-    lines = [f"# 자립ON 자립설계 요약 — {p['name']} 님", f"기준월: {TODAY.year}.{TODAY.month:02d}", "",
-             "## 현재 상태", f"- 월 수입 {man(p['monthly_income'])} / 월 지출 {man(p['monthly_expense'])}",
-             f"- 이용 중 제도: {', '.join(PROGRAMS[x]['name'] for x in p['using_programs']) or '없음'}", "",
-             "## 추천 지원제도"]
+@st.cache_data(show_spinner=False)
+def build_pdf_cached(data_json: str) -> bytes:
+    from core.report import build_pdf
+    return build_pdf(json.loads(data_json))
+
+
+def make_report_data(p: dict, selected: list[str], cashflow: dict, plans, period: int, monthly_saving: int,
+                     goal: dict, independence: dict, checks: list) -> dict:
+    """PDF 보고서에 들어갈 내용을 정리한다."""
+    rows = []
     for r in RECOMMENDER.recommend(p):
-        lines.append(f"- [{r.status}] {PROGRAMS[r.program_id]['name']} — {PROGRAMS[r.program_id]['apply']}")
-    lines += ["", "## 현금흐름", f"- 현재 월 잉여 {man(s['before_monthly'])} → 지원 후 {man(s['after_monthly'])}"
-              + (f" → 취업 후(가정) {man(s['job_monthly'])}" if s["job_monthly"] is not None else ""),
-              f"- 가정 항목: {', '.join(s['assumptions']) or '없음'}", "", f"## 예·적금 ({period}개월)"]
-    for x in plans:
-        lines.append(f"- {x.product}: 원금 {x.principal:,}원, 세후이자 {x.net_interest:,}원, 만기 {x.maturity:,}원")
-    lines += ["", f"## {s['goal_year']}년 자립 목표", f"- 목표 {man(s['goal_amount'])} / 예상 {man(s['goal_balance'])}",
-              f"- 필요 본인 월 저축(취업 후): {man(s['need_self_monthly']) if s['need_self_monthly'] is not None else '-'}",
-              "", "> 본 결과는 가정에 기반한 시뮬레이션이며 수급 여부를 확정하지 않습니다. 공식 기관에서 확인하세요."]
-    return "\n".join(lines)
+        if not r.verified and r.program_id not in selected:
+            continue
+        prog = PROGRAMS[r.program_id]
+        if r.amount:
+            amount_text = f"월 {r.amount:,}원 예상\n{r.amount_label.split('(')[-1].rstrip(')') if '(' in r.amount_label else ''}"
+        elif r.copay:
+            amount_text = f"현금 지원 없음 (서비스)\n본인부담 월 {r.copay:,}원"
+        elif r.status == el.NO_MATCH:
+            amount_text = r.checks[0] if r.checks else "현재 조건과 맞지 않음"
+        else:
+            amount_text = prog.get("amount_info") or prog["summary"][:60]
+        rows.append(dict(status=r.status, name=prog["name"], category=prog["category"], in_use=r.in_use,
+                         amount=r.amount, amount_text=amount_text.strip(),
+                         apply=f"{prog['apply']}\n{prog['contact']}",
+                         url=(prog.get("links") or [{}])[0].get("url", "")))
+    refs = [("복지로 (복지서비스 검색·신청)", "https://www.bokjiro.go.kr"),
+            ("보건복지부 장애인연금 안내", "https://www.mohw.go.kr/menu.es?mid=a10710030100"),
+            ("한국장애인고용공단", "https://www.kead.or.kr"),
+            ("금융감독원 금융상품 한눈에 (예·적금 금리 비교)", "https://finlife.fss.or.kr"),
+            ("국가법령정보센터", "https://www.law.go.kr")]
+    return dict(
+        name=p["name"], base_month=f"{TODAY.year}.{TODAY.month:02d}", generated=date.today().isoformat(),
+        profile_line=f"만 {p['age']}세 · {p['region']} · {p['disability_type']}({p['severity']}) · {p['employment']}",
+        status=dict(income=p["monthly_income"], expense=p["monthly_expense"], goal_year=p["goal_year"], goal_amount=p["goal_amount"],
+                    income_note=" · ".join(i["name"].split(" (")[0] for i in p["income_items"])[:30] or "-",
+                    expense_note=f"{len(p['expense_items'])}개 항목"),
+        programs=rows, cashflow=cashflow,
+        plans=[dict(product=x.product, principal=x.principal, net_interest=x.net_interest, maturity=x.maturity) for x in plans],
+        period=period, monthly_saving=monthly_saving, goal=goal, independence=independence, checks=checks, refs=refs)
 
 
 # ─────────────────────────── 라우팅 ───────────────────────────

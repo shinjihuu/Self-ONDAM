@@ -2,3 +2,4 @@ streamlit>=1.40
 plotly>=5.20
 pandas>=2.0
 openai>=1.40
+fpdf2>=2.7

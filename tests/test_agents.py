@@ -62,9 +62,9 @@ def test_catalog_merges_curated_first(tmp_path):
     out = tmp_path / "collected.json"
     out.write_text(json.dumps(_collected(), ensure_ascii=False), encoding="utf-8")
     progs, info = load_catalog(True, collected_path=out)
-    assert info["curated"] == 5 and info["collected_used"] == 4 and len(progs) == 9
+    assert info["curated"] == 6 and info["collected_used"] == 4 and len(progs) == 10
     progs2, info2 = load_catalog(False, collected_path=out)
-    assert len(progs2) == 5 and info2["collected_used"] == 0
+    assert len(progs2) == 6 and info2["collected_used"] == 0
 
 
 def test_unverified_never_priority(tmp_path):
@@ -84,9 +84,22 @@ def test_recommender_answer_uses_relevant_programs(monkeypatch):
     agent, _ = RecommenderAgent.from_files(include_collected=False)
     assert agent.relevant("근로지원인은 언제 신청해요?", 2)[0]["id"] == "work_assistant"
     seen = {}
-    monkeypatch.setattr(ai, "answer_question", lambda q, p, progs: (seen.setdefault("n", [x["id"] for x in progs]), False))
+    def fake(q, p, progs, summary):
+        seen["n"] = [x["id"] for x in progs]
+        seen["s"] = summary
+        return "", False
+    monkeypatch.setattr(ai, "answer_question", fake)
     agent.answer("장애인연금 신청", DAUGHTER, top_k=3)
     assert seen["n"][0] == "disability_pension" and len(seen["n"]) == 3
+    pen = next(x for x in seen["s"] if x["제도"] == "장애인연금")
+    assert pen["월 예상 지원액"] == 379_700            # 이 사용자의 계산 결과가 AI 근거로 전달됨
+
+
+def test_knowledge_retrieval_for_inheritance():
+    hits = [it["topic"] for it in ai.relevant_knowledge("발달장애인 자녀 상속은 어떻게 이뤄져?")]
+    assert any("상속공제" in h for h in hits) and any("신탁" in h for h in hits)
+    text = ai._fallback_answer("발달장애인 자녀 상속은 어떻게 이뤄져?", [])
+    assert "상속" in text and "☎" in text
 
 
 def test_api_403_is_diagnosed_and_key_masked(monkeypatch):

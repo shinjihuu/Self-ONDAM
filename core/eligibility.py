@@ -39,6 +39,10 @@ class Recommendation:
     future: str = ""                                    # 앞으로 달라질 수 있는 점
     in_use: bool = False
     verified: bool = True                               # 수작업 검수 여부
+    amount: int = 0                                     # 월 예상 현금 지원액(원)
+    amount_label: str = ""                              # 금액 한 줄 요약
+    amount_steps: list[str] = field(default_factory=list)  # 계산 과정
+    copay: int = 0                                      # 서비스 본인부담금(원/월)
 
 
 def _age_text(lo, hi) -> str:
@@ -144,6 +148,26 @@ def evaluate(program: dict, p: dict) -> Recommendation:
             r.status = MORE_INFO
             r.checks.append("월 소득이 참고 선정기준액보다 높아 소득 심사 결과를 확인해야 합니다. "
                             "(근로소득은 공제 후 반영되므로 실제로는 낮게 계산될 수 있습니다)")
+
+    # 9-b) 금액 계산 (2026년 기준) — 해당 여부를 금액 규칙으로 최종 판정
+    if c.get("estimate"):
+        from core import benefits
+        est = benefits.estimate_for(c["estimate"], p)
+        if est is not None:
+            r.amount_label, r.amount_steps = est.label, est.steps
+            if c["estimate"] == "activity_support":
+                r.copay = est.monthly
+            elif est.eligible is False:
+                r.status = NO_MATCH
+                r.checks.insert(0, est.label)
+                r.amount_label = ""
+            elif est.eligible is None:
+                r.status = MORE_INFO
+                r.checks.insert(0, est.label)
+            else:
+                r.amount = est.monthly
+                r.reasons.append(f"2026년 기준 계산: {est.label}")
+            r.checks.extend(est.notes)
 
     r.checks.extend(c.get("checks", []))
     if p["employment"] in JOB_SEEKING and fut.get("job_seeking"):

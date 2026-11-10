@@ -41,6 +41,7 @@ class JobAssumption:
     salary: int               # 월 실수령 예상 급여
     extra_expense: int = 0    # 취업으로 늘어나는 지출 (교통비·식비 등)
     ended_expense: int = 0    # 취업하면 끝나는 지출 (예: 직업훈련비)
+    benefit_change: int = 0   # 취업으로 소득인정액이 바뀌어 달라지는 현금 지원 (예: 장애인연금 감액은 음수)
 
 
 def _month_label(start_year: int, start_month: int, offset: int) -> tuple[int, int]:
@@ -77,7 +78,7 @@ def project_cashflow(
 
         job_in, job_out = after_in, after_out
         if job is not None and m >= job.start_offset:
-            job_in += job.salary
+            job_in += job.salary + job.benefit_change
             job_out += job.extra_expense - min(job.ended_expense, job_out)
 
         rows.append({

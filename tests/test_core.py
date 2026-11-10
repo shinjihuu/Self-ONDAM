@@ -213,3 +213,67 @@ def test_no_credit_disables_service_but_others_continue(clean_ai):
     assert tried == ["Groq", "Hugging Face"]               # HF는 모델 하나만 시도
     assert [p["name"] for p in ai.providers()] == ["Groq"]  # HF는 이번 실행에서 제외
     assert "credits" in ai._DISABLED["Hugging Face"]
+
+
+# ── 2026년 금액 계산 ──
+from core import benefits as bf
+
+
+def _p(**kw):
+    base = dict(registered=True, severity="심한 장애", age=24, region="인천광역시", income_items=[],
+                savings=0, property_general=0, debt=0, income_level="일반 (차상위 초과)", has_spouse=False)
+    base.update(kw)
+    return base
+
+
+def test_pension_2026_amounts_by_income_level():
+    assert bf.pension_estimate(_p()).monthly == 349_700 + 30_000
+    assert bf.pension_estimate(_p(income_level="차상위계층")).monthly == 349_700 + 80_000
+    assert bf.pension_estimate(_p(income_level="생계·의료급여 수급자")).monthly == 349_700 + 90_000   # 최대 439,700원
+
+
+def test_pension_earned_income_deduction():
+    # 근로 120만 원 → (120만 − 95만) × 0.7 = 17.5만 원
+    p = _p(income_items=[{"name": "급여", "amount": 1_200_000, "kind": "근로소득"}])
+    ri, _ = bf.recognized_income(p)
+    assert ri == 175_000
+    assert bf.pension_estimate(p).monthly == 379_700
+
+
+def test_pension_reduction_and_cutoff():
+    # 근로 260만 원 → (260 − 95) × 0.7 = 115.5만 → 기초급여 = 140만 − 115.5만 = 24.5만
+    p = _p(income_items=[{"name": "급여", "amount": 2_600_000, "kind": "근로소득"}])
+    e = bf.pension_estimate(p)
+    assert e.eligible and e.breakdown[0][1] == 245_000 and e.monthly == 275_000
+    # 근로 300만 원 → 143.5만 > 140만 → 대상 아님
+    assert bf.pension_estimate(_p(income_items=[{"name": "급여", "amount": 3_000_000, "kind": "근로소득"}])).eligible is False
+
+
+def test_pension_property_and_parents_not_counted():
+    # 금융재산 3,000만 원 → (3,000 − 2,000)만 × 4% ÷ 12 = 33,333원
+    ri, _ = bf.recognized_income(_p(savings=30_000_000))
+    assert ri == 33_333
+    # 장애인연금 자체는 소득으로 보지 않음
+    ri2, _ = bf.recognized_income(_p(income_items=[{"name": "장애인연금 (수급 중)", "amount": 379_700}]))
+    assert ri2 == 0
+
+
+def test_pension_not_for_mild_and_allowance_instead():
+    mild = _p(severity="심하지 않은 장애", income_level="차상위계층")
+    assert bf.pension_estimate(mild).eligible is False
+    assert bf.allowance_estimate(mild).monthly == 60_000
+    assert bf.allowance_estimate(_p(severity="심하지 않은 장애")).eligible is False      # 일반 소득은 대상 아님
+
+
+def test_activity_copay_rules():
+    assert bf.activity_copay(_p(income_level="생계·의료급여 수급자"), 2_000_000).monthly == 0
+    assert bf.activity_copay(_p(income_level="차상위계층"), 2_000_000).monthly == 20_000
+    assert bf.activity_copay(_p(median_band="중위소득 70~120%"), 2_070_000).monthly == 124_200   # 보고서 연 149만 원
+    assert bf.activity_copay(_p(median_band="중위소득 180% 초과"), 5_000_000).monthly == 216_200  # 상한
+
+
+def test_afpk_pension_matches_report():
+    """보고서 현금흐름표 장애인연금 연 455만 원 ≈ 2026 기준 월 379,700원 × 12."""
+    p = PERSONAS["afpk_daughter"]["profile"]
+    e = bf.pension_estimate(p)
+    assert e.monthly == 379_700 and abs(e.monthly * 12 - 4_550_000) < 10_000

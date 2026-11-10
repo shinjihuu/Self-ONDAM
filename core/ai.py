@@ -229,29 +229,74 @@ def _fallback_simulation(s: dict) -> str:
 
 
 # ─────────────────────────── 질의응답 ───────────────────────────
-def answer_question(question: str, profile: dict, programs: list[dict]) -> tuple[str, bool]:
-    ctx = [{k: p[k] for k in ("name", "summary", "benefits", "requirements", "cautions", "apply", "contact")}
+QA_SYSTEM = """너는 '자립ON'의 자립설계 상담가 AI야. 발달장애인과 가족이 묻는 복지제도, 돈 관리, 취업, 주거,
+상속·증여·신탁·후견 같은 법률·세금 질문까지 폭넓게 도와줘. 재무설계사(AFPK)처럼 실질적으로 답해.
+
+답변 형식 (마크다운):
+**한 줄 답**: 질문에 대한 결론을 한두 문장으로.
+**자세히**: 핵심 내용 3~6개 목록. 제도 이름·금액·조건을 구체적으로.
+**우리 가족에 적용하면**: [사용자 정보]와 [계산 결과]의 숫자를 써서 이 가족에게 맞춘 조언 1~3개.
+**확인할 곳**: 기관·전문가와 연락처 (예: 주민센터, 보건복지상담센터 ☎129, 국세청 ☎126, 대한법률구조공단 ☎132, 세무사·변호사).
+
+규칙:
+1. 쉬운 낱말과 존댓말(~해요). 전문용어는 괄호로 풀어 줘.
+2. [참고 지식]과 [제도 자료]를 우선 쓰고, 없는 내용은 일반 지식으로 답해도 돼. 다만 법·세금의 금액과 기준은
+   "2026년 기준, 최종 확인 필요"처럼 표시하고, 확실하지 않은 숫자는 지어내지 마.
+3. 수급이나 세금 결과를 확정하지 마 ("조건이 맞아 보여요", "가능성이 높아요").
+4. 돌봄·활동지원 같은 서비스는 현금 수입이 아니야.
+5. 한국어로만, 600~900자 정도로.
+"""
+
+
+def _load_knowledge() -> list[dict]:
+    try:
+        from pathlib import Path
+        path = Path(__file__).resolve().parents[1] / "data" / "knowledge.json"
+        return json.loads(path.read_text(encoding="utf-8"))["items"]
+    except Exception:
+        return []
+
+
+KNOWLEDGE = _load_knowledge()
+
+
+def relevant_knowledge(question: str, top_k: int = 4) -> list[dict]:
+    q = question.replace(" ", "")
+    scored = [(sum(2 if k in q else 0 for k in it["keywords"]) + (3 if it["topic"].replace(" ", "")[:4] in q else 0), it)
+              for it in KNOWLEDGE]
+    return [it for sc, it in sorted(scored, key=lambda x: -x[0]) if sc > 0][:top_k]
+
+
+def answer_question(question: str, profile: dict, programs: list[dict],
+                    recs_summary: list[dict] | None = None) -> tuple[str, object]:
+    ctx = [{k: p.get(k) for k in ("name", "summary", "amount_info", "requirements", "cautions", "apply", "contact")}
            for p in programs]
+    know = relevant_knowledge(question)
     prompt = f"""[사용자 정보] {_profile_brief(profile)}
-[공식 자료] {json.dumps(ctx, ensure_ascii=False)}
+[계산 결과 · 추천 제도] {json.dumps(recs_summary or [], ensure_ascii=False)}
+[참고 지식] {json.dumps([{k: it[k] for k in ("topic", "content", "source")} for it in know], ensure_ascii=False)}
+[제도 자료] {json.dumps(ctx, ensure_ascii=False)}
 
-질문: {question}
-
-공식 자료 안에서만 답해 줘. 자료에 없으면 어디에 문의하면 되는지(연락처) 알려 줘. 5문장 이내."""
-    out = _chat(prompt, 450)
+질문: {question}"""
+    out = _chat(prompt, 1400, system=QA_SYSTEM)
     if out:
         return out, LAST_PROVIDER or "AI"
-    return _fallback_answer(question, programs), False
+    return _fallback_answer(question, programs, know), False
 
 
-def _fallback_answer(question: str, programs: list[dict]) -> str:
+def _fallback_answer(question: str, programs: list[dict], know: list[dict] | None = None) -> str:
     q = question.replace(" ", "")
     for p in programs:
         key = p["name"].replace(" ", "")
         short = key.replace("장애인", "").replace("발달", "").replace("서비스", "").replace("지원사업", "")
         if key in q or (short and short in q):
             return (f"**{p['name']}** — {p['summary']}\n\n"
-                    f"- 대상: {' / '.join(p['requirements'])}\n"
+                    + (f"- 금액: {p['amount_info']}\n" if p.get("amount_info") else "")
+                    + f"- 대상: {' / '.join(p['requirements'])}\n"
                     f"- 신청: {p['apply']}\n- 문의: {p['contact']}")
-    return ("궁금한 제도 이름을 넣어 다시 물어봐 주세요. (예: ‘장애인연금 신청은 어디서 해요?’)\n\n"
+    know = know if know is not None else relevant_knowledge(question)
+    if know:
+        return "\n\n".join(f"**{it['topic']}**\n{it['content']}\n\n_근거: {it['source']}_" for it in know[:2]) + \
+               "\n\n법률·세금 판단은 대한법률구조공단 ☎132, 국세청 ☎126 또는 세무사·변호사와 상담하세요."
+    return ("궁금한 제도나 주제를 넣어 다시 물어봐 주세요. (예: ‘장애인연금은 얼마 받아요?’, ‘장애인 신탁이 뭐예요?’)\n\n"
             "자세한 상담은 보건복지상담센터 ☎ 129, 한국장애인고용공단 ☎ 1588-1519에서 받을 수 있어요.")

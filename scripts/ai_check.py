@@ -97,6 +97,9 @@ def check_app_explanation() -> None:
     print(f"\n== 앱 추천 설명 예시 (주간활동서비스) · 응답: {by or '규칙 기반'} ==\n{text}")
     if not by:
         print(f"마지막 오류: {ai.LAST_ERROR}")
+    for q in ("발달장애인 자녀 상속은 어떻게 준비해요?", "딸이 취업하면 장애인연금은 얼마가 돼요?"):
+        ans, by = agent.answer(q, profile)
+        print(f"\n== 질문: {q} · 응답: {by or '규칙 기반'} ==\n{ans}")
 
 
 def main() -> int:

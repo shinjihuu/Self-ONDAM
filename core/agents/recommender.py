@@ -76,7 +76,12 @@ class RecommenderAgent:
 
     # 3) 질의응답 — 질문과 관련 있는 제도만 골라 근거로 넘긴다
     def answer(self, question: str, profile: dict, top_k: int = 6) -> tuple[str, object]:
-        return ai.answer_question(question, profile, self.relevant(question, top_k))
+        """질문과 관련된 제도 + 이 사용자의 판정·금액 결과를 함께 근거로 넘긴다."""
+        recs = [r for r in self.recommend(profile) if r.verified]
+        summary = [{"제도": self.by_id[r.program_id]["name"], "판정": r.status,
+                    "월 예상 지원액": r.amount or None, "본인부담": r.copay or None, "금액 근거": r.amount_label or None}
+                   for r in recs]
+        return ai.answer_question(question, profile, self.relevant(question, top_k), summary)
 
     def relevant(self, question: str, top_k: int = 6) -> list[dict]:
         q = question.replace(" ", "")
