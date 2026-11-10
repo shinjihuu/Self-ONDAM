@@ -650,7 +650,7 @@ def page_simulator() -> None:
                     f"<th>세금(15.4%)</th><th>세후이자</th><th>만기금액</th></tr></thead><tbody>{rows}</tbody></table></div>",
                     unsafe_allow_html=True)
         st.caption("단리 기준 · 적금 이자 = 월납입액 × 연이율/12 × n(n+1)/2 · 비과세종합저축은 별도 상품이 아니라 "
-                   "요건(장애인 등)을 충족한 저축에 적용되는 세제 혜택이며, 1인당 원금 5,000만 원 한도로 가정 (적용기한 연장 여부 확인 필요)")
+                   "요건(장애인 등)을 충족한 저축에 적용되는 세제 혜택이며, 1인당 원금 5,000만 원 한도로 가정 (조세특례제한법 제88조의2, 적용기한 2028.12.31까지 연장 · 장애인 대상 요건은 금융기관에서 확인)")
     with c2, st.container(border=True):
         st.markdown("**원금(내 돈) vs 이자(새로 생긴 돈)**")
         fig = go.Figure()
