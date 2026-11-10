@@ -47,6 +47,17 @@ def req(url: str, body: dict | None = None, timeout: int = 60) -> tuple[int, str
         return 0, f"{type(e).__name__}: {e}"
 
 
+def req_with(url: str, key: str, timeout: int = 30) -> tuple[int, str]:
+    r = urllib.request.Request(url, headers={"Authorization": f"Bearer {key}"})
+    try:
+        with urllib.request.urlopen(r, timeout=timeout) as resp:
+            return resp.status, resp.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        return e.code, e.read().decode("utf-8", "replace")
+    except Exception as e:
+        return 0, f"{type(e).__name__}: {e}"
+
+
 def check_other_services() -> None:
     """Gemini·Groq·OpenAI 키가 있으면 자립ON과 같은 방식(core.ai)으로 실제 호출해 본다."""
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -55,11 +66,18 @@ def check_other_services() -> None:
         if p["name"] == "Hugging Face":
             continue
         print(f"\n== {p['name']} ==")
+        if p["base_url"]:
+            st_, body = req_with(p["base_url"].rstrip("/") + "/models", p["api_key"])
+            if st_ == 200:
+                ids = [d.get("id", "") for d in json.loads(body).get("data", [])]
+                chat = [i for i in ids if not any(k in i for k in ("embed", "image", "tts", "audio", "veo", "imagen", "aqa", "live"))]
+                print(f"사용 가능한 모델 {len(ids)}개 중 대화형 일부: {chat[:40]}")
+            else:
+                print(f"모델 목록 실패 HTTP {st_}: {body[:200]}")
         for m in p["models"]:
             try:
                 out = ai._call({**p, "model": m}, "장애인연금이 뭔지 한 문장으로 쉽게 설명해 주세요.", 80, system="한국어로 짧게 답해.")
                 print(f"✅ {m}: {out[:90]}")
-                break
             except Exception as e:
                 print(f"❌ {m}: {type(e).__name__}: {str(e)[:200]}")
 
