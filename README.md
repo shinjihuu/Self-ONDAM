@@ -48,6 +48,15 @@ AFPK 영 플래너 챌린지 · 4일 개발 MVP
 2. GitHub 레포 **Settings → Secrets and variables → Actions → New repository secret**에 `DATA_GO_KR_KEY`를 추가해요. AI로 조건을 다듬으려면 `HF_TOKEN`도 추가해요.
 3. **Actions → 지원제도 수집 에이전트 → Run workflow**로 바로 실행해요. 이후에는 매주 월요일 새벽에 자동 실행되고, 결과가 커밋되면 Streamlit 앱에 자동 반영돼요.
 
+GitHub Actions 서버는 미국에 있어서 공공데이터포털 접속이 느리거나 끊길 수 있어요. 계속 실패하면 **국내 PC에서 실행**한 뒤 결과 파일을 올리면 돼요.
+
+```powershell
+# Windows PowerShell
+$env:DATA_GO_KR_KEY="발급받은_Decoding_키"
+python -m core.agents.collector --limit 40
+git add data/programs_collected.json; git commit -m "지원제도 데이터 갱신"; git push
+```
+
 로컬 실행:
 
 ```bash

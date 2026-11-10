@@ -60,6 +60,7 @@ def _service_key() -> str | None:
     return key
 
 
+TIMEOUT = int(os.environ.get("WELFARE_API_TIMEOUT", "60"))   # 해외에서 응답이 느릴 수 있어 넉넉하게
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; JaripON-collector/1.0)", "Accept": "application/xml, text/xml, */*"}
 
 # 공공데이터포털 오류 코드 → 쉬운 원인 설명
@@ -90,17 +91,18 @@ def _diagnose(status: int | None, body: str) -> str:
     return f"HTTP {status}"
 
 
-def _get(url: str, params: dict, retries: int = 2) -> str:
-    """API 호출. 4xx는 원인을 진단해 바로 알리고, 5xx·네트워크 오류만 재시도. https 실패 시 http로 한 번 더 시도."""
+def _get(url: str, params: dict, retries: int = 3) -> str:
+    """API 호출. 4xx는 원인을 진단해 바로 알리고, 5xx·네트워크 오류만 재시도.
+    해외 서버(GitHub Actions)에서는 https가 403으로 막히는 경우가 있어 http를 먼저 시도한다."""
     q = urllib.parse.urlencode(params)
     key = str(params.get("serviceKey", ""))
     mask = lambda s: s.replace(key, "***").replace(urllib.parse.quote(key, safe=""), "***") if key else s
     last = None
-    for base in (url, url.replace("https://", "http://", 1)):
+    for base in (url.replace("https://", "http://", 1), url):
         for i in range(retries + 1):
             try:
                 req = urllib.request.Request(f"{base}?{q}", headers=HEADERS)
-                with urllib.request.urlopen(req, timeout=25) as r:
+                with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
                     text = r.read().decode("utf-8", errors="replace")
                 for code, hint in API_ERROR_HINTS.items():   # 200 응답 안에 오류가 담겨 오는 경우
                     if code in text and "<servList>" not in text and "<servId>" not in text:
@@ -115,7 +117,7 @@ def _get(url: str, params: dict, retries: int = 2) -> str:
                     break            # 4xx는 재시도해도 같으니 다음 주소(http)로
             except Exception as e:  # 네트워크 일시 오류 → 재시도
                 last = ApiError(f"네트워크 오류: {e}")
-            time.sleep(1.5 * (i + 1))
+            time.sleep(3 * (i + 1))
     raise last or ApiError("API 호출 실패")
 
 
@@ -163,7 +165,10 @@ def fetch_from_api(query: str, limit: int) -> tuple[list[dict], dict[str, dict]]
     for it in items:
         sid = it.get("servId")
         if sid:
-            details[sid] = parse_detail(_get(DETAIL_URL, {"serviceKey": key, "callTp": "D", "servId": sid}))
+            try:
+                details[sid] = parse_detail(_get(DETAIL_URL, {"serviceKey": key, "callTp": "D", "servId": sid}, retries=1))
+            except ApiError as e:   # 상세 조회 하나가 실패해도 목록 정보로 계속 진행
+                print(f"[수집 에이전트] 상세 조회 건너뜀 {sid}: {str(e).splitlines()[0]}", file=sys.stderr)
     return items, details
 
 
