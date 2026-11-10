@@ -55,7 +55,7 @@ def load_persona(pid: str) -> None:
 def get_selected(p: dict) -> dict:
     """시뮬레이터에 담은 제도 (페이지 이동 후에도 유지)."""
     if st.session_state.get("selected") is None:
-        st.session_state.selected = {r.program_id: r.status != el.NO_MATCH for r in RECOMMENDER.recommend(p)}
+        st.session_state.selected = {r.program_id: r.status != el.NO_MATCH and r.verified for r in RECOMMENDER.recommend(p)}
     return st.session_state.selected
 
 
@@ -346,6 +346,40 @@ def agent_panel() -> None:
         st.caption("🛡️ 자동 수집 제도는 사람이 검수하기 전까지 ‘우선 확인’으로 올리지 않아요. AI는 자격을 판정하지 않고 설명만 해요.")
 
 
+def collected_list(p: dict, recs: list, flt: str, sel: dict) -> None:
+    """자동 수집(검수 전) 제도: 접힌 목록으로 가볍게 보여준다 (AI 호출 없음)."""
+    shown = [r for r in recs if r.status != el.NO_MATCH
+             and (flt == "전체" or PROGRAMS[r.program_id]["category"] == flt)]
+    hidden = sum(r.status == el.NO_MATCH for r in recs)
+    if not recs:
+        return
+    when = (CATALOG_INFO["collected_meta"].get("collected_at") or "")[:10]
+    with st.expander(f"📡 자동 수집 제도 {len(shown)}개 더 보기 · 검수 전 · {when} 수집"
+                     + (f" (조건이 맞지 않는 {hidden}개 숨김)" if hidden else "")):
+        st.caption("수집 에이전트가 공공데이터(한국사회보장정보원 복지서비스정보)에서 모은 제도예요. "
+                   "사람이 검수하기 전이라 ‘우선 확인’으로 올리지 않고, 맞는 조건이 많은 순서로 보여드려요.")
+        q = st.text_input("제도 이름으로 찾기", key="collected_q", placeholder="예: 일자리, 보조기기, 후견")
+        rows = sorted(shown, key=lambda r: (-len(r.reasons), PROGRAMS[r.program_id]["name"]))
+        if q:
+            rows = [r for r in rows if q.replace(" ", "") in PROGRAMS[r.program_id]["name"].replace(" ", "")]
+        for r in rows[:40]:
+            prog = PROGRAMS[r.program_id]
+            tlabel, tkind = ui.TYPE_BADGE[prog["support_type"]]
+            reasons = " · ".join(r.reasons[:3])
+            link = prog["links"][0]["url"] if prog.get("links") else ""
+            c1, c2 = st.columns([5, 1.3])
+            c1.markdown(f'<div style="padding:8px 0;border-bottom:1px dashed #F1E2D6">{prog["icon"]} <b>{esc(prog["name"])}</b> '
+                        f'{ui.badge(tlabel, tkind)}<span style="font-size:.78rem;color:#8C7B73"> {esc(prog["agency"])}</span>'
+                        f'<div style="font-size:.85rem;color:#6B5A52">{esc(prog["summary"][:110])}</div>'
+                        + (f'<div style="font-size:.78rem;color:#4E9C7D">✓ {esc(reasons)}</div>' if reasons else "")
+                        + (f'<a href="{link}" target="_blank" style="font-size:.78rem">복지로에서 자세히 ↗</a>' if link else "")
+                        + "</div>", unsafe_allow_html=True)
+            c2.checkbox("담기", key=f"sel_{r.program_id}", value=sel.get(r.program_id, False),
+                        on_change=_toggle_sel, args=(r.program_id,))
+        if len(rows) > 40:
+            st.caption(f"… 외 {len(rows) - 40}개 (검색으로 좁혀 보세요)")
+
+
 def page_support() -> None:
     p = profile
     ui.hero("STEP 2 · AI 맞춤 지원 추천", f"{esc(p['name'])} 님께 맞는 지원을 찾았어요",
@@ -357,7 +391,7 @@ def page_support() -> None:
     chips = " ".join(ui.badge(x, "no") for x in
                      [f"만 {p['age']}세", p["region"], p["disability_type"], p["severity"], p["employment"], f"돌봄 {p['care_need']}"])
     st.markdown(f'<div style="margin:-6px 0 10px">{chips}</div>', unsafe_allow_html=True)
-    cnt = {s: sum(r.status == s for r in recs) for s in el.STATUS_ORDER}
+    cnt = {s: sum(r.status == s for r in recs if r.verified) for s in el.STATUS_ORDER}   # 검수된 제도 기준
     ui.tiles([
         ("✅ 우선 확인", f"{cnt[el.PRIORITY]}개", "조건이 잘 맞아 먼저 알아볼 제도", "mint"),
         ("🔎 추가 정보 필요", f"{cnt[el.MORE_INFO]}개", "심사·조사 등 확인이 더 필요", "butter"),
@@ -368,7 +402,7 @@ def page_support() -> None:
     flt = st.radio("보기", ["전체", "재무적 지원", "비재무적 지원"], horizontal=True, label_visibility="collapsed")
     pjson = json.dumps(p, ensure_ascii=False, sort_keys=True, default=str)
 
-    for r in recs:
+    for r in [x for x in recs if x.verified]:      # 검수된 제도: 자세한 카드 + AI 설명
         prog = PROGRAMS[r.program_id]
         if flt != "전체" and prog["category"] != flt:
             continue
@@ -408,6 +442,8 @@ def page_support() -> None:
                             f"<b>문의</b> {esc(prog['contact'])}<br>{links}</div>", unsafe_allow_html=True)
             st.checkbox("🧮 시뮬레이터에 담기", key=f"sel_{r.program_id}", value=sel.get(r.program_id, False),
                         on_change=_toggle_sel, args=(r.program_id,))
+
+    collected_list(p, [x for x in recs if not x.verified], flt, sel)
 
     selected = [pid for pid in PROGRAMS if sel.get(pid)]
     warns = RECOMMENDER.selected_warnings(p, selected)
