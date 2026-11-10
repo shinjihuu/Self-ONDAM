@@ -32,7 +32,9 @@ PROVIDERS = [
      "models": [DEFAULT_OPENAI_MODEL]},
     {"name": "Gemini", "keys": ("GEMINI_API_KEY", "GOOGLE_API_KEY"),
      "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/", "model_env": "GEMINI_MODEL",
-     "models": ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.0-flash"]},
+     # 2026-11 점검: 키에 열린 모델 목록 기준 (2.5/2.0 flash는 404)
+     "models": ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-flash-latest",
+                "gemini-3.1-flash-lite", "gemma-4-26b-a4b-it"]},
     {"name": "Groq", "keys": ("GROQ_API_KEY",), "base_url": "https://api.groq.com/openai/v1", "model_env": "GROQ_MODEL",
      "models": ["openai/gpt-oss-20b", "llama-3.1-8b-instant", "llama-3.3-70b-versatile"]},
     {"name": "Hugging Face", "keys": ("HF_TOKEN", "HUGGINGFACEHUB_API_TOKEN"),
