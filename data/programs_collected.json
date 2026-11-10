@@ -1,17 +1,17 @@
 {
   "meta": {
-    "collected_at": "2026-11-10T10:17+00:00",
+    "collected_at": "2026-11-10T10:19+00:00",
     "source": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
     "snapshot": "uddi:e02ed092-d46d-4bf2-8e7e-c3441e950fef",
     "fetched": 461,
-    "kept": 40,
+    "kept": 64,
     "skipped_duplicates": 3,
-    "skipped_off_target": 370,
+    "skipped_off_target": 394,
     "by_type": {
-      "employment": 7,
-      "care": 29,
-      "cash": 3,
-      "finance": 1
+      "employment": 14,
+      "finance": 3,
+      "care": 45,
+      "cash": 2
     },
     "notice": "자동 수집된 제도는 검수 전이며, 추천 에이전트는 이 제도들을 ‘우선 확인’으로 올리지 않습니다."
   },
@@ -54,7 +54,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000025",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -62,9 +62,9 @@
     {
       "id": "bokjiro_WLF00000026",
       "name": "장애인자립자금대여",
-      "category": "비재무적 지원",
-      "support_type": "care",
-      "icon": "🤝",
+      "category": "재무적 지원",
+      "support_type": "finance",
+      "icon": "🏦",
       "agency": "보건복지부",
       "summary": "저소득 장애인의 소규모 창업 및 출퇴근용 자동차 구입 비용을 장기 저리로 대여하여 생업의 기반을 다지고 편리하게 이동할 수 있도록 지원합니다.",
       "benefits": [
@@ -76,7 +76,7 @@
       "cautions": [
         "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
       ],
-      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "cashflow_rule": "지원금이 아니라 저축 매칭·이자·세제 효과로만 반영합니다.",
       "default_amount": 0,
       "apply": "복지로 상세 안내 참고",
       "contact": "보건복지상담센터129 주소지 읍·면·동 주민센터주소지 읍·면·동 주민센터",
@@ -91,7 +91,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000026",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -130,118 +130,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000027",
-        "fetched_at": "2026-11-10T10:17+00:00",
-        "verified": false,
-        "extractor": "rules"
-      }
-    },
-    {
-      "id": "bokjiro_WLF00000032",
-      "name": "실종아동 등 보호 및 지원",
-      "category": "비재무적 지원",
-      "support_type": "care",
-      "icon": "🤝",
-      "agency": "보건복지부",
-      "summary": "아동 및 장애인(지적·자폐성·정신)의 실종예방 교육 및 홍보, 장기실종 가족지원을 통해 가족해체를 예방합니다.",
-      "benefits": [
-        "아동 및 장애인(지적·자폐성·정신)의 실종예방 교육 및 홍보, 장기실종 가족지원을 통해 가족해체를 예방합니다."
-      ],
-      "requirements": [
-        "아동 및 장애인(지적·자폐성·정신)의 실종예방 교육 및 홍보, 장기실종 가족지원을 통해 가족해체를 예방합니다."
-      ],
-      "cautions": [
-        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
-      ],
-      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
-      "default_amount": 0,
-      "apply": "복지로 상세 안내 참고",
-      "contact": "실종아동전문기관02-777-0182",
-      "links": [
-        {
-          "label": "복지로 상세 안내",
-          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00000032&wlfareInfoReldBztpCd=01"
-        }
-      ],
-      "criteria": {},
-      "source": {
-        "type": "collected",
-        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00000032",
-        "fetched_at": "2026-11-10T10:17+00:00",
-        "verified": false,
-        "extractor": "rules"
-      }
-    },
-    {
-      "id": "bokjiro_WLF00000040",
-      "name": "선천성대사이상 검사 및 환아관리",
-      "category": "비재무적 지원",
-      "support_type": "care",
-      "icon": "🤝",
-      "agency": "보건복지부",
-      "summary": "선천성대사이상의 유무를 조기에 발견·치료함으로써 장애발생을 사전에 예방하여 영유아의 건강 증진을 도모합니다.",
-      "benefits": [
-        "선천성대사이상의 유무를 조기에 발견·치료함으로써 장애발생을 사전에 예방하여 영유아의 건강 증진을 도모합니다."
-      ],
-      "requirements": [
-        "선천성대사이상의 유무를 조기에 발견·치료함으로써 장애발생을 사전에 예방하여 영유아의 건강 증진을 도모합니다."
-      ],
-      "cautions": [
-        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
-      ],
-      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
-      "default_amount": 0,
-      "apply": "복지로 상세 안내 참고",
-      "contact": "보건복지부 상담센터129",
-      "links": [
-        {
-          "label": "복지로 상세 안내",
-          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00000040&wlfareInfoReldBztpCd=01"
-        }
-      ],
-      "criteria": {},
-      "source": {
-        "type": "collected",
-        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00000040",
-        "fetched_at": "2026-11-10T10:17+00:00",
-        "verified": false,
-        "extractor": "rules"
-      }
-    },
-    {
-      "id": "bokjiro_WLF00000051",
-      "name": "고엽제환자2세수당",
-      "category": "재무적 지원",
-      "support_type": "cash",
-      "icon": "💰",
-      "agency": "국가보훈부",
-      "summary": "고엽제후유증환자의 자녀가 안정된 생활을 할 수 있도록  장애 정도에 따른 수당을 지원합니다.",
-      "benefits": [
-        "고엽제후유증환자의 자녀가 안정된 생활을 할 수 있도록  장애 정도에 따른 수당을 지원합니다."
-      ],
-      "requirements": [
-        "고엽제후유증환자의 자녀가 안정된 생활을 할 수 있도록  장애 정도에 따른 수당을 지원합니다."
-      ],
-      "cautions": [
-        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
-      ],
-      "cashflow_rule": "수급이 확인된 금액 또는 ‘가정한 지원액’만 월 수입에 더합니다.",
-      "default_amount": 0,
-      "apply": "복지로 상세 안내 참고",
-      "contact": "보훈상담센터1577-0606",
-      "links": [
-        {
-          "label": "복지로 상세 안내",
-          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00000051&wlfareInfoReldBztpCd=01"
-        }
-      ],
-      "criteria": {},
-      "source": {
-        "type": "collected",
-        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00000051",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -283,7 +172,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000064",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -325,7 +214,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000065",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -362,7 +251,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000066",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -370,9 +259,9 @@
     {
       "id": "bokjiro_WLF00000067",
       "name": "의료급여 장애인보조기기 지원",
-      "category": "재무적 지원",
-      "support_type": "cash",
-      "icon": "💰",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
       "agency": "보건복지부",
       "summary": "의료급여수급 장애인에게 장애인보조기기비용을 지원하여 저소득 장애인의 삶의 질 향상과 사회복지 증진에 기여합니다.",
       "benefits": [
@@ -384,7 +273,7 @@
       "cautions": [
         "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
       ],
-      "cashflow_rule": "수급이 확인된 금액 또는 ‘가정한 지원액’만 월 수입에 더합니다.",
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
       "default_amount": 0,
       "apply": "복지로 상세 안내 참고",
       "contact": "보건복지상담센터129",
@@ -399,7 +288,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000067",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -436,48 +325,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000068",
-        "fetched_at": "2026-11-10T10:17+00:00",
-        "verified": false,
-        "extractor": "rules"
-      }
-    },
-    {
-      "id": "bokjiro_WLF00000087",
-      "name": "지방세 비과세감면(주민세, 취득세, 자동차세, 재산세, 지역자원시설세 등)",
-      "category": "비재무적 지원",
-      "support_type": "care",
-      "icon": "🤝",
-      "agency": "행정안전부",
-      "summary": "기초생활수급자, 국가유공자, 장애인 등이 부담하는 지방세를 감면&middot;면제하여 생활 안정과 시설 운영을 돕습니다.",
-      "benefits": [
-        "기초생활수급자, 국가유공자, 장애인 등이 부담하는 지방세를 감면&middot;면제하여 생활 안정과 시설 운영을 돕습니다."
-      ],
-      "requirements": [
-        "기초생활수급자, 국가유공자, 장애인 등이 부담하는 지방세를 감면&middot;면제하여 생활 안정과 시설 운영을 돕습니다."
-      ],
-      "cautions": [
-        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
-      ],
-      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
-      "default_amount": 0,
-      "apply": "복지로 상세 안내 참고",
-      "contact": "행정안전부 고객센터02-2100-3399",
-      "links": [
-        {
-          "label": "복지로 상세 안내",
-          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00000087&wlfareInfoReldBztpCd=01"
-        }
-      ],
-      "criteria": {
-        "checks": [
-          "기초생활수급자·차상위계층 여부를 확인하세요."
-        ]
-      },
-      "source": {
-        "type": "collected",
-        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00000087",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -514,7 +362,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000090",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -551,7 +399,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000099",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -588,7 +436,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000104",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -620,12 +468,14 @@
           "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001021&wlfareInfoReldBztpCd=01"
         }
       ],
-      "criteria": {},
+      "criteria": {
+        "max_age": 18
+      },
       "source": {
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001021",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -662,7 +512,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001062",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -694,12 +544,14 @@
           "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001067&wlfareInfoReldBztpCd=01"
         }
       ],
-      "criteria": {},
+      "criteria": {
+        "max_age": 18
+      },
       "source": {
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001067",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -736,7 +588,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001070",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -773,7 +625,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001075",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -814,7 +666,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001090",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -851,7 +703,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001093",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -888,7 +740,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001117",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -920,91 +772,14 @@
           "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001121&wlfareInfoReldBztpCd=01"
         }
       ],
-      "criteria": {},
-      "source": {
-        "type": "collected",
-        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00001121",
-        "fetched_at": "2026-11-10T10:17+00:00",
-        "verified": false,
-        "extractor": "rules"
-      }
-    },
-    {
-      "id": "bokjiro_WLF00001125",
-      "name": "산재근로자직업훈련",
-      "category": "비재무적 지원",
-      "support_type": "employment",
-      "icon": "💼",
-      "agency": "고용노동부",
-      "summary": "산업재해로 치료를 받고 요양 종결 후에 원래의 직장에 복귀하지 못한 산업재해 장애인에게 직업훈련비용과 훈련수당을 지원하여 직업 복귀를 촉진합니다.",
-      "benefits": [
-        "산업재해로 치료를 받고 요양 종결 후에 원래의 직장에 복귀하지 못한 산업재해 장애인에게 직업훈련비용과 훈련수당을 지원하여 직업 복귀를 촉진합니다."
-      ],
-      "requirements": [
-        "산업재해로 치료를 받고 요양 종결 후에 원래의 직장에 복귀하지 못한 산업재해 장애인에게 직업훈련비용과 훈련수당을 지원하여 직업 복귀를 촉진합니다."
-      ],
-      "cautions": [
-        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
-      ],
-      "cashflow_rule": "직접 수입으로 반영하지 않습니다. 취업 후 급여는 별도로 가정합니다.",
-      "default_amount": 0,
-      "apply": "복지로 상세 안내 참고",
-      "contact": "근로복지공단 고객센터1588-0075",
-      "links": [
-        {
-          "label": "복지로 상세 안내",
-          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001125&wlfareInfoReldBztpCd=01"
-        }
-      ],
-      "criteria": {},
-      "source": {
-        "type": "collected",
-        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00001125",
-        "fetched_at": "2026-11-10T10:17+00:00",
-        "verified": false,
-        "extractor": "rules"
-      }
-    },
-    {
-      "id": "bokjiro_WLF00001130",
-      "name": "선천성 난청검사 및 보청기 지원",
-      "category": "비재무적 지원",
-      "support_type": "care",
-      "icon": "🤝",
-      "agency": "보건복지부",
-      "summary": "선천성 난청을 조기진단하고, 조기 재활을 통해 난청으로 인해 발생할 수 있는 언어 지능 발달장애 사회부적응 등을 예방하고 건강한 성장을 도모합니다.",
-      "benefits": [
-        "선천성 난청을 조기진단하고, 조기 재활을 통해 난청으로 인해 발생할 수 있는 언어 지능 발달장애 사회부적응 등을 예방하고 건강한 성장을 도모합니다."
-      ],
-      "requirements": [
-        "선천성 난청을 조기진단하고, 조기 재활을 통해 난청으로 인해 발생할 수 있는 언어 지능 발달장애 사회부적응 등을 예방하고 건강한 성장을 도모합니다."
-      ],
-      "cautions": [
-        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
-      ],
-      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
-      "default_amount": 0,
-      "apply": "복지로 상세 안내 참고",
-      "contact": "보건복지상담센터129",
-      "links": [
-        {
-          "label": "복지로 상세 안내",
-          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001130&wlfareInfoReldBztpCd=01"
-        }
-      ],
       "criteria": {
-        "disability_types": [
-          "지적장애",
-          "자폐성장애"
-        ]
+        "max_age": 18
       },
       "source": {
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00001130",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "serv_id": "WLF00001121",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1041,44 +816,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001133",
-        "fetched_at": "2026-11-10T10:17+00:00",
-        "verified": false,
-        "extractor": "rules"
-      }
-    },
-    {
-      "id": "bokjiro_WLF00001134",
-      "name": "권역재활병원 공공재활프로그램 운영지원",
-      "category": "비재무적 지원",
-      "support_type": "care",
-      "icon": "🤝",
-      "agency": "보건복지부",
-      "summary": "권역재활병원의 사회복귀, 방문재활, 장애아동 재활 등 공공재활프로그램 활성화를 통해 장애발생 후 입원기간을 단축하여 효과적 재활치료와 성공적인 사회복귀를 도모합니다.",
-      "benefits": [
-        "권역재활병원의 사회복귀, 방문재활, 장애아동 재활 등 공공재활프로그램 활성화를 통해 장애발생 후 입원기간을 단축하여 효과적 재활치료와 성공적인 사회복귀를 도모합니다."
-      ],
-      "requirements": [
-        "권역재활병원의 사회복귀, 방문재활, 장애아동 재활 등 공공재활프로그램 활성화를 통해 장애발생 후 입원기간을 단축하여 효과적 재활치료와 성공적인 사회복귀를 도모합니다."
-      ],
-      "cautions": [
-        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
-      ],
-      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
-      "default_amount": 0,
-      "apply": "복지로 상세 안내 참고",
-      "contact": "보건복지부 장애인건강과044-202-3191/3193",
-      "links": [
-        {
-          "label": "복지로 상세 안내",
-          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001134&wlfareInfoReldBztpCd=01"
-        }
-      ],
-      "criteria": {},
-      "source": {
-        "type": "collected",
-        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00001134",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1086,9 +824,9 @@
     {
       "id": "bokjiro_WLF00001136",
       "name": "보험급여(건강보험 장애인보조기기)",
-      "category": "재무적 지원",
-      "support_type": "cash",
-      "icon": "💰",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
       "agency": "보건복지부",
       "summary": "건강보험가입자 및 피부양자 중 「장애인복지법」에 따라 등록한 장애인이 장애인보조기기를 구입할 경우 구입금액 일부를 지원합니다.",
       "benefits": [
@@ -1100,7 +838,7 @@
       "cautions": [
         "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
       ],
-      "cashflow_rule": "수급이 확인된 금액 또는 ‘가정한 지원액’만 월 수입에 더합니다.",
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
       "default_amount": 0,
       "apply": "복지로 상세 안내 참고",
       "contact": "국민건강보험공단 상담센터1577-1000 보건복지부 콜센터129",
@@ -1117,7 +855,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001136",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1158,7 +896,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001143",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1200,7 +938,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001150",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1241,7 +979,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001151",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1283,44 +1021,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001154",
-        "fetched_at": "2026-11-10T10:17+00:00",
-        "verified": false,
-        "extractor": "rules"
-      }
-    },
-    {
-      "id": "bokjiro_WLF00001160",
-      "name": "노숙자 등 알코올중독자 사례관리 사업",
-      "category": "비재무적 지원",
-      "support_type": "care",
-      "icon": "🤝",
-      "agency": "보건복지부",
-      "summary": "중독관리통합지원센터를 통해 알코올 사용장애가 있는 노숙인 등의 자활을 위한 상담, 치료, 재활 지원 서비스를 제공합니다.",
-      "benefits": [
-        "중독관리통합지원센터를 통해 알코올 사용장애가 있는 노숙인 등의 자활을 위한 상담, 치료, 재활 지원 서비스를 제공합니다."
-      ],
-      "requirements": [
-        "중독관리통합지원센터를 통해 알코올 사용장애가 있는 노숙인 등의 자활을 위한 상담, 치료, 재활 지원 서비스를 제공합니다."
-      ],
-      "cautions": [
-        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
-      ],
-      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
-      "default_amount": 0,
-      "apply": "복지로 상세 안내 참고",
-      "contact": "보건복지상담센터129",
-      "links": [
-        {
-          "label": "복지로 상세 안내",
-          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001160&wlfareInfoReldBztpCd=01"
-        }
-      ],
-      "criteria": {},
-      "source": {
-        "type": "collected",
-        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00001160",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1357,44 +1058,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001167",
-        "fetched_at": "2026-11-10T10:17+00:00",
-        "verified": false,
-        "extractor": "rules"
-      }
-    },
-    {
-      "id": "bokjiro_WLF00001173",
-      "name": "국립특수학교 및 국립부설학교 특수학급 지원",
-      "category": "비재무적 지원",
-      "support_type": "care",
-      "icon": "🤝",
-      "agency": "교육부",
-      "summary": "국립특수학교(급)의 특수교육 지원인력 배치, 돌봄교실 운영 및 특수교육대상자의 방과후학교 경비를 지원하여 장애학생의 학습권을 보장합니다.",
-      "benefits": [
-        "국립특수학교(급)의 특수교육 지원인력 배치, 돌봄교실 운영 및 특수교육대상자의 방과후학교 경비를 지원하여 장애학생의 학습권을 보장합니다."
-      ],
-      "requirements": [
-        "국립특수학교(급)의 특수교육 지원인력 배치, 돌봄교실 운영 및 특수교육대상자의 방과후학교 경비를 지원하여 장애학생의 학습권을 보장합니다."
-      ],
-      "cautions": [
-        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
-      ],
-      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
-      "default_amount": 0,
-      "apply": "복지로 상세 안내 참고",
-      "contact": "교육부 특수교육정책과044-203-6569",
-      "links": [
-        {
-          "label": "복지로 상세 안내",
-          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001173&wlfareInfoReldBztpCd=01"
-        }
-      ],
-      "criteria": {},
-      "source": {
-        "type": "collected",
-        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
-        "serv_id": "WLF00001173",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1438,7 +1102,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001178",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1475,7 +1139,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001187",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1512,7 +1176,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003170",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1549,7 +1213,1274 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003173",
-        "fetched_at": "2026-11-10T10:17+00:00",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003174",
+      "name": "장애인창업육성",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "중소벤처기업부",
+      "summary": "장애인의 성공적인 창업을 위해 창업교육, 사업화 지원, 특화사업장 등을 지원합니다.",
+      "benefits": [
+        "장애인의 성공적인 창업을 위해 창업교육, 사업화 지원, 특화사업장 등을 지원합니다."
+      ],
+      "requirements": [
+        "장애인의 성공적인 창업을 위해 창업교육, 사업화 지원, 특화사업장 등을 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "장애인기업종합지원센터 문의전화02-2181-6500",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003174&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003174",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003181",
+      "name": "장애인의료비지원",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "생활이 어려운 저소득 장애인에게 의료비를 지원하여 생활안정 및 의료 보장을 도모합니다.",
+      "benefits": [
+        "생활이 어려운 저소득 장애인에게 의료비를 지원하여 생활안정 및 의료 보장을 도모합니다."
+      ],
+      "requirements": [
+        "생활이 어려운 저소득 장애인에게 의료비를 지원하여 생활안정 및 의료 보장을 도모합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지부 상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003181&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003181",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003183",
+      "name": "장애인 표준사업장 설립지원",
+      "category": "비재무적 지원",
+      "support_type": "employment",
+      "icon": "💼",
+      "agency": "고용노동부",
+      "summary": "장애인표준사업장을 설립, 운영하고자 하는 사업주에게 지원금을 지급하여 중증장애인의 안정된 일자리를 창출하고 고용을 유지하도록 합니다.",
+      "benefits": [
+        "장애인표준사업장을 설립, 운영하고자 하는 사업주에게 지원금을 지급하여 중증장애인의 안정된 일자리를 창출하고 고용을 유지하도록 합니다."
+      ],
+      "requirements": [
+        "장애인표준사업장을 설립, 운영하고자 하는 사업주에게 지원금을 지급하여 중증장애인의 안정된 일자리를 창출하고 고용을 유지하도록 합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "직접 수입으로 반영하지 않습니다. 취업 후 급여는 별도로 가정합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "고용노동부 종합상담센터1544-1350 한국장애인고용공단  전북지사063-240-2400 한국장애인고용공단 강원지사033-737-6620 한국장애인고용공단 경기동부지사031-600-0209 한국장애인고용공단 경기북부지사031-850-4500 한국장애인고용공단 경기지역본부031-300-0906 한국장애인고용공단 경남지사 055-225-8006 한국장애인고용공",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003183&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "severity": "심한 장애"
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003183",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003189",
+      "name": "중증장애인직업재활지원",
+      "category": "비재무적 지원",
+      "support_type": "employment",
+      "icon": "💼",
+      "agency": "보건복지부",
+      "summary": "사각지대 없는 촘촘한 직업재활서비스 제공을 통해 중증장애인의 자립기반을 마련하고 사회참여 증진을 도모합니다.",
+      "benefits": [
+        "사각지대 없는 촘촘한 직업재활서비스 제공을 통해 중증장애인의 자립기반을 마련하고 사회참여 증진을 도모합니다."
+      ],
+      "requirements": [
+        "사각지대 없는 촘촘한 직업재활서비스 제공을 통해 중증장애인의 자립기반을 마련하고 사회참여 증진을 도모합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "직접 수입으로 반영하지 않습니다. 취업 후 급여는 별도로 가정합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지부 상담센터129 한국장애인개발원02-3433-0660",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003189&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "severity": "심한 장애"
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003189",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003195",
+      "name": "발달재활서비스",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "성장기 정신적, 감각적 장애아동의 인지, 의사소통, 적응행동, 감각, 운동 등의 기능향상과 행동발달을 위한 재활서비스를 지원하고, 관련 정보를 제공합니다.",
+      "benefits": [
+        "성장기 정신적, 감각적 장애아동의 인지, 의사소통, 적응행동, 감각, 운동 등의 기능향상과 행동발달을 위한 재활서비스를 지원하고, 관련 정보를 제공합니다."
+      ],
+      "requirements": [
+        "성장기 정신적, 감각적 장애아동의 인지, 의사소통, 적응행동, 감각, 운동 등의 기능향상과 행동발달을 위한 재활서비스를 지원하고, 관련 정보를 제공합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129 사회서비스전자바우처1566-3232",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003195&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003195",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003198",
+      "name": "장애아동수당",
+      "category": "재무적 지원",
+      "support_type": "cash",
+      "icon": "💰",
+      "agency": "보건복지부",
+      "summary": "장애로 인하여 생활이 어려운 장애아동이 보다 편안한 생활을 할 수 있도록 지원합니다.",
+      "benefits": [
+        "장애로 인하여 생활이 어려운 장애아동이 보다 편안한 생활을 할 수 있도록 지원합니다."
+      ],
+      "requirements": [
+        "장애로 인하여 생활이 어려운 장애아동이 보다 편안한 생활을 할 수 있도록 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "수급이 확인된 금액 또는 ‘가정한 지원액’만 월 수입에 더합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129 전국 읍·면·동 주민센터전국 읍·면·동 주민센터",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003198&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "max_age": 18
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003198",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003210",
+      "name": "장애인기업 성장기반구축",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "중소벤처기업부",
+      "summary": "장애인기업의 성장기반 구축을 지원합니다.",
+      "benefits": [
+        "장애인기업의 성장기반 구축을 지원합니다."
+      ],
+      "requirements": [
+        "장애인기업의 성장기반 구축을 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "장애인기업종합지원센터 문의전화02-2181-6500",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003210&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003210",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003211",
+      "name": "장애인보조기기 교부",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "생활이 어려운 저소득 장애인에게 장애인보조기구를 교부함으로써 생활능력 향상 및 복지증진을 도모합니다.",
+      "benefits": [
+        "생활이 어려운 저소득 장애인에게 장애인보조기구를 교부함으로써 생활능력 향상 및 복지증진을 도모합니다."
+      ],
+      "requirements": [
+        "생활이 어려운 저소득 장애인에게 장애인보조기구를 교부함으로써 생활능력 향상 및 복지증진을 도모합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지부 상담센터129 중앙보조기기센터1670-5529",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003211&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003211",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003217",
+      "name": "장애인자립생활지원센터 지원",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "장애인 대상 권익옹호, 동료상담, 개인별 자립지원 등 서비스를 통해 장애인의 자립생활에 필요한 역량강화와 지역사회의 다양한 사회참여 활동을 지원합니다.",
+      "benefits": [
+        "장애인 대상 권익옹호, 동료상담, 개인별 자립지원 등 서비스를 통해 장애인의 자립생활에 필요한 역량강화와 지역사회의 다양한 사회참여 활동을 지원합니다."
+      ],
+      "requirements": [
+        "장애인 대상 권익옹호, 동료상담, 개인별 자립지원 등 서비스를 통해 장애인의 자립생활에 필요한 역량강화와 지역사회의 다양한 사회참여 활동을 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003217&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003217",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003220",
+      "name": "여성장애인교육지원",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "장애와 여성이라는 이중 제약으로 교육의 기회를 갖지 못한 장애 여성에게 교육서비스를 제공하여 사회참여 기회를 확대합니다.",
+      "benefits": [
+        "장애와 여성이라는 이중 제약으로 교육의 기회를 갖지 못한 장애 여성에게 교육서비스를 제공하여 사회참여 기회를 확대합니다."
+      ],
+      "requirements": [
+        "장애와 여성이라는 이중 제약으로 교육의 기회를 갖지 못한 장애 여성에게 교육서비스를 제공하여 사회참여 기회를 확대합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003220&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003220",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003258",
+      "name": "아동발달지원계좌(디딤씨앗통장)지원",
+      "category": "재무적 지원",
+      "support_type": "finance",
+      "icon": "🏦",
+      "agency": "보건복지부",
+      "summary": "취약계층 아동의 사회진출 시 학자금･취업･창업･주거마련 등에 소요되는 초기비용 마련을 위한 자산형성을 지원합니다.",
+      "benefits": [
+        "취약계층 아동의 사회진출 시 학자금･취업･창업･주거마련 등에 소요되는 초기비용 마련을 위한 자산형성을 지원합니다."
+      ],
+      "requirements": [
+        "취약계층 아동의 사회진출 시 학자금･취업･창업･주거마련 등에 소요되는 초기비용 마련을 위한 자산형성을 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "지원금이 아니라 저축 매칭·이자·세제 효과로만 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129 아동권리보장원02-6454-8500",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003258&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "max_age": 18
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003258",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003259",
+      "name": "중증장애인지원고용",
+      "category": "비재무적 지원",
+      "support_type": "employment",
+      "icon": "💼",
+      "agency": "고용노동부",
+      "summary": "독립적인 직업생활영위가 어려운 중증장애인의 고용 증진을 위해 직무수행에 필요한 기술과 직장적응을 취업 전 사업체 현장에서 지도하여 취업으로 연계합니다.",
+      "benefits": [
+        "독립적인 직업생활영위가 어려운 중증장애인의 고용 증진을 위해 직무수행에 필요한 기술과 직장적응을 취업 전 사업체 현장에서 지도하여 취업으로 연계합니다."
+      ],
+      "requirements": [
+        "독립적인 직업생활영위가 어려운 중증장애인의 고용 증진을 위해 직무수행에 필요한 기술과 직장적응을 취업 전 사업체 현장에서 지도하여 취업으로 연계합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "직접 수입으로 반영하지 않습니다. 취업 후 급여는 별도로 가정합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "한국장애인고용공단1588-1519",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003259&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "severity": "심한 장애"
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003259",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003262",
+      "name": "장애아가족양육지원",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "장애아동 가족의 일상적인 돌봄 부담을 경감하고 보호자의 사회활동을 돕기 위하여 돌봄 및 일시적 휴식지원 서비스를 제공합니다.",
+      "benefits": [
+        "장애아동 가족의 일상적인 돌봄 부담을 경감하고 보호자의 사회활동을 돕기 위하여 돌봄 및 일시적 휴식지원 서비스를 제공합니다."
+      ],
+      "requirements": [
+        "장애아동 가족의 일상적인 돌봄 부담을 경감하고 보호자의 사회활동을 돕기 위하여 돌봄 및 일시적 휴식지원 서비스를 제공합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003262&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "max_age": 18
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003262",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003265",
+      "name": "장애수당",
+      "category": "재무적 지원",
+      "support_type": "cash",
+      "icon": "💰",
+      "agency": "보건복지부",
+      "summary": "장애인연금 비수급 경증장애인을 대상으로 장애로 인한 추가적 비용을 보전하여 저소득 장애인 가구의 생활 안정을 도모합니다.",
+      "benefits": [
+        "장애인연금 비수급 경증장애인을 대상으로 장애로 인한 추가적 비용을 보전하여 저소득 장애인 가구의 생활 안정을 도모합니다."
+      ],
+      "requirements": [
+        "장애인연금 비수급 경증장애인을 대상으로 장애로 인한 추가적 비용을 보전하여 저소득 장애인 가구의 생활 안정을 도모합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "수급이 확인된 금액 또는 ‘가정한 지원액’만 월 수입에 더합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129 전국 읍·면·동 주민센터전국 읍·면·동 주민센터",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003265&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003265",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003278",
+      "name": "여성장애인 출산비용지원",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "임신과 출산에 대한 비용이 추가로 발생하는 여성장애인에게 출산비용을 지원하여 경제적 부담을 경감하고 모성권 보호에 기여합니다.",
+      "benefits": [
+        "임신과 출산에 대한 비용이 추가로 발생하는 여성장애인에게 출산비용을 지원하여 경제적 부담을 경감하고 모성권 보호에 기여합니다."
+      ],
+      "requirements": [
+        "임신과 출산에 대한 비용이 추가로 발생하는 여성장애인에게 출산비용을 지원하여 경제적 부담을 경감하고 모성권 보호에 기여합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003278&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003278",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003279",
+      "name": "언어발달지원사업",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "장애인 부모의 자녀에게 필요한 언어발달지원서비스를 제공하여 아동의 건강한 성장을 지원합니다.",
+      "benefits": [
+        "장애인 부모의 자녀에게 필요한 언어발달지원서비스를 제공하여 아동의 건강한 성장을 지원합니다."
+      ],
+      "requirements": [
+        "장애인 부모의 자녀에게 필요한 언어발달지원서비스를 제공하여 아동의 건강한 성장을 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129 사회서비스 전자바우처15266-3232",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003279&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003279",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00003282",
+      "name": "다문화가족 자녀 언어발달지원서비스",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "성평등가족부",
+      "summary": "다문화가정의 자녀가 건강한 사회구성원, 글로벌 인재로 성장할 수 있도록 체계적인 언어발달을 돕습니다.",
+      "benefits": [
+        "다문화가정의 자녀가 건강한 사회구성원, 글로벌 인재로 성장할 수 있도록 체계적인 언어발달을 돕습니다."
+      ],
+      "requirements": [
+        "다문화가정의 자녀가 건강한 사회구성원, 글로벌 인재로 성장할 수 있도록 체계적인 언어발달을 돕습니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "다누리콜센터1577-1366",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003282&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00003282",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00004654",
+      "name": "장애인인턴제",
+      "category": "비재무적 지원",
+      "support_type": "employment",
+      "icon": "💼",
+      "agency": "고용노동부",
+      "summary": "취업 사각지대에 놓인 특정 유형의 중증장애인 및 장년장애인, 발달장애인에게 사업체 인턴 실시 후 정규직 취업 연계를 지원합니다.",
+      "benefits": [
+        "취업 사각지대에 놓인 특정 유형의 중증장애인 및 장년장애인, 발달장애인에게 사업체 인턴 실시 후 정규직 취업 연계를 지원합니다."
+      ],
+      "requirements": [
+        "취업 사각지대에 놓인 특정 유형의 중증장애인 및 장년장애인, 발달장애인에게 사업체 인턴 실시 후 정규직 취업 연계를 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "직접 수입으로 반영하지 않습니다. 취업 후 급여는 별도로 가정합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "한국장애인고용공단1588-1519",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004654&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "severity": "심한 장애",
+        "disability_types": [
+          "지적장애",
+          "자폐성장애"
+        ]
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00004654",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00004655",
+      "name": "장애인취업성공패키지",
+      "category": "비재무적 지원",
+      "support_type": "employment",
+      "icon": "💼",
+      "agency": "고용노동부",
+      "summary": "장애인의 취업역량을 강화하고 성공적인 취업을 지원하기 위해 '상담·취업계획수립→직업능력향상→집중 취업알선'에 이르는 통합적인 취업지원 프로그램을 집중 제공합니다.",
+      "benefits": [
+        "장애인의 취업역량을 강화하고 성공적인 취업을 지원하기 위해 '상담·취업계획수립→직업능력향상→집중 취업알선'에 이르는 통합적인 취업지원 프로그램을 집중 제공합니다."
+      ],
+      "requirements": [
+        "장애인의 취업역량을 강화하고 성공적인 취업을 지원하기 위해 '상담·취업계획수립→직업능력향상→집중 취업알선'에 이르는 통합적인 취업지원 프로그램을 집중 제공합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "직접 수입으로 반영하지 않습니다. 취업 후 급여는 별도로 가정합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "한국장애인고용공단1588-1519",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004655&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00004655",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00005024",
+      "name": "장애인 자립지원 시범사업",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "지역사회 자립을 희망하는 장애인 대상 주택 및 주거서비스 지원을 통해 장애인의 지역사회 자립 및 안정적 정착을 지원합니다.",
+      "benefits": [
+        "지역사회 자립을 희망하는 장애인 대상 주택 및 주거서비스 지원을 통해 장애인의 지역사회 자립 및 안정적 정착을 지원합니다."
+      ],
+      "requirements": [
+        "지역사회 자립을 희망하는 장애인 대상 주택 및 주거서비스 지원을 통해 장애인의 지역사회 자립 및 안정적 정착을 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "한국장애인개발원 중앙장애인지역사회통합지원센터02-3433-4565, 02-3433-4532",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00005024&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00005024",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00005031",
+      "name": "발달장애인 긴급돌봄사업",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "보호자의 긴급한 상황(입원, 경조사, 심리적 소진 등)으로 긴급돌봄이 필요한 발달장애인에게 일시적 돌봄을 지원합니다.",
+      "benefits": [
+        "보호자의 긴급한 상황(입원, 경조사, 심리적 소진 등)으로 긴급돌봄이 필요한 발달장애인에게 일시적 돌봄을 지원합니다."
+      ],
+      "requirements": [
+        "보호자의 긴급한 상황(입원, 경조사, 심리적 소진 등)으로 긴급돌봄이 필요한 발달장애인에게 일시적 돌봄을 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "광역지방자치단체(시.도)시.도청 장애인 관련 부서 보건복지상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00005031&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "disability_types": [
+          "지적장애",
+          "자폐성장애"
+        ]
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00005031",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00005034",
+      "name": "장애인 건강주치의 시범사업",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "장애인에게 건강주치의를 통한 만성질환 및 장애 관련 건강관리 서비스를 제공하여 의료서비스 이용 접근성을 향상시킵니다.",
+      "benefits": [
+        "장애인에게 건강주치의를 통한 만성질환 및 장애 관련 건강관리 서비스를 제공하여 의료서비스 이용 접근성을 향상시킵니다."
+      ],
+      "requirements": [
+        "장애인에게 건강주치의를 통한 만성질환 및 장애 관련 건강관리 서비스를 제공하여 의료서비스 이용 접근성을 향상시킵니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "국립재활원(중앙장애인보건의료센터)02-901-1305 국민건강보험공단1577-1000 보건복지부 장애인건강과044-202-3191/3192",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00005034&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00005034",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00005853",
+      "name": "장애인 개인예산제 운영",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "장애인의 선택권 강화, 서비스 칸막이를 제거하여 탄력적으로 서비스를 이용할 수 있도록 지원합니다.",
+      "benefits": [
+        "장애인의 선택권 강화, 서비스 칸막이를 제거하여 탄력적으로 서비스를 이용할 수 있도록 지원합니다."
+      ],
+      "requirements": [
+        "장애인의 선택권 강화, 서비스 칸막이를 제거하여 탄력적으로 서비스를 이용할 수 있도록 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00005853&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00005853",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00006251",
+      "name": "중증장애인확인서 발급",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "고용노동부",
+      "summary": "「장애인고용촉진 및 직업재활법」 상 중증장애인 여부를 확인하는 서류로서, 중증장애인여부를 '중증장애인 확인서'로 별도 확인할 수 있습니다.",
+      "benefits": [
+        "「장애인고용촉진 및 직업재활법」 상 중증장애인 여부를 확인하는 서류로서, 중증장애인여부를 '중증장애인 확인서'로 별도 확인할 수 있습니다."
+      ],
+      "requirements": [
+        "「장애인고용촉진 및 직업재활법」 상 중증장애인 여부를 확인하는 서류로서, 중증장애인여부를 '중증장애인 확인서'로 별도 확인할 수 있습니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "한국장애인고용공단1588-1519",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00006251&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "severity": "심한 장애"
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00006251",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00006253",
+      "name": "장애인고용개선장려금",
+      "category": "비재무적 지원",
+      "support_type": "employment",
+      "icon": "💼",
+      "agency": "고용노동부",
+      "summary": "기업의 장애인 고용의무 이행을 유도하고 중증장애인 일자리 창출을 위하여 지원대상 사업주가 중증장애인 근로자 고용을 늘린 사업주에게 장애인고용개선장려금을 지원합니다.",
+      "benefits": [
+        "기업의 장애인 고용의무 이행을 유도하고 중증장애인 일자리 창출을 위하여 지원대상 사업주가 중증장애인 근로자 고용을 늘린 사업주에게 장애인고용개선장려금을 지원합니다."
+      ],
+      "requirements": [
+        "기업의 장애인 고용의무 이행을 유도하고 중증장애인 일자리 창출을 위하여 지원대상 사업주가 중증장애인 근로자 고용을 늘린 사업주에게 장애인고용개선장려금을 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "직접 수입으로 반영하지 않습니다. 취업 후 급여는 별도로 가정합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "한국장애인고용공단 지역본부/지사로 문의 한국장애인고용공단1588-1519",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00006253&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "severity": "심한 장애",
+        "employment_required": [
+          "취업 중"
+        ]
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00006253",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00006257",
+      "name": "장애인 건강보험료 경감",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "건강보험료 부담 능력이 저하된 취약세대의 의료사각지대 방지를 위해 보험료 일부를 지원합니다.",
+      "benefits": [
+        "건강보험료 부담 능력이 저하된 취약세대의 의료사각지대 방지를 위해 보험료 일부를 지원합니다."
+      ],
+      "requirements": [
+        "건강보험료 부담 능력이 저하된 취약세대의 의료사각지대 방지를 위해 보험료 일부를 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "국민건강보험공단1577-1000",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00006257&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00006257",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00006260",
+      "name": "장애인 주택개조사업",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "국토교통부",
+      "summary": "저소득 장애인이 거주하는 주택의 편의시설·안전장치 설치·개선비용을 지원, 일상생활에서의 이동안전 및 활동편의 증진을 목적으로 합니다.",
+      "benefits": [
+        "저소득 장애인이 거주하는 주택의 편의시설·안전장치 설치·개선비용을 지원, 일상생활에서의 이동안전 및 활동편의 증진을 목적으로 합니다."
+      ],
+      "requirements": [
+        "저소득 장애인이 거주하는 주택의 편의시설·안전장치 설치·개선비용을 지원, 일상생활에서의 이동안전 및 활동편의 증진을 목적으로 합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "국토교통부1599-0001 등록주소지 관할 시.군 담당부서로 문의",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00006260&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00006260",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00006294",
+      "name": "장애인 등록 신청",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "장애인복지법 제32조에 따라 본인, 법정대리인 또는 보호자가 거주지 읍,면,동 행정복지센터에 장애인 등록을 신청할 수 있습니다.",
+      "benefits": [
+        "장애인복지법 제32조에 따라 본인, 법정대리인 또는 보호자가 거주지 읍,면,동 행정복지센터에 장애인 등록을 신청할 수 있습니다."
+      ],
+      "requirements": [
+        "장애인복지법 제32조에 따라 본인, 법정대리인 또는 보호자가 거주지 읍,면,동 행정복지센터에 장애인 등록을 신청할 수 있습니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00006294&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "registered": "required"
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00006294",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00006297",
+      "name": "장애인 창업보육실 운영",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "중소벤처기업부",
+      "summary": "우수한 창업아이템을 보유한 창업 초기의 장애인 기업을 대상으로 비즈니스 공간 및 사무기기, 기업지원정책 등을 지원합니다.",
+      "benefits": [
+        "우수한 창업아이템을 보유한 창업 초기의 장애인 기업을 대상으로 비즈니스 공간 및 사무기기, 기업지원정책 등을 지원합니다."
+      ],
+      "requirements": [
+        "우수한 창업아이템을 보유한 창업 초기의 장애인 기업을 대상으로 비즈니스 공간 및 사무기기, 기업지원정책 등을 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "(재)장애인기업종합지원센터 대표전화1588-6072 지역별 장애인기업종합지원센터 지역센터지역센터 개별 문의",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00006297&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "max_age": 18
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00006297",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00006299",
+      "name": "지역장애인보건의료센터",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "지역사회 내 건강관리가 필요한 장애인에게 적절한 건강보건관리서비스를 제공하여 건강한 삶을 누릴 수 있도록 지원합니다.",
+      "benefits": [
+        "지역사회 내 건강관리가 필요한 장애인에게 적절한 건강보건관리서비스를 제공하여 건강한 삶을 누릴 수 있도록 지원합니다."
+      ],
+      "requirements": [
+        "지역사회 내 건강관리가 필요한 장애인에게 적절한 건강보건관리서비스를 제공하여 건강한 삶을 누릴 수 있도록 지원합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00006299&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00006299",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00006317",
+      "name": "발달장애인 자기주도 재직자 훈련",
+      "category": "비재무적 지원",
+      "support_type": "employment",
+      "icon": "💼",
+      "agency": "고용노동부",
+      "summary": "발달장애 근로자에게 직업생활 유지를 위한 직무능력 향상 및 기초 소양 훈련 프로그램을 제공합니다.",
+      "benefits": [
+        "발달장애 근로자에게 직업생활 유지를 위한 직무능력 향상 및 기초 소양 훈련 프로그램을 제공합니다."
+      ],
+      "requirements": [
+        "발달장애 근로자에게 직업생활 유지를 위한 직무능력 향상 및 기초 소양 훈련 프로그램을 제공합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "직접 수입으로 반영하지 않습니다. 취업 후 급여는 별도로 가정합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "한국장애인고용공단1588-1519",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00006317&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "disability_types": [
+          "지적장애",
+          "자폐성장애"
+        ],
+        "employment_required": [
+          "취업 중"
+        ]
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00006317",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00006334",
+      "name": "장애인거주시설 이용",
+      "category": "비재무적 지원",
+      "support_type": "care",
+      "icon": "🤝",
+      "agency": "보건복지부",
+      "summary": "장애인거주시설 등을 활용하여 일반가정에서 생활하기 어려운 장애인을 대상으로 24시간 거주, 요양, 지원 등의 서비스를 제공합니다.",
+      "benefits": [
+        "장애인거주시설 등을 활용하여 일반가정에서 생활하기 어려운 장애인을 대상으로 24시간 거주, 요양, 지원 등의 서비스를 제공합니다."
+      ],
+      "requirements": [
+        "장애인거주시설 등을 활용하여 일반가정에서 생활하기 어려운 장애인을 대상으로 24시간 거주, 요양, 지원 등의 서비스를 제공합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "현금 수입으로 반영하지 않습니다. 실제로 줄어드는 본인 비용만 지출 감소로 반영합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00006334&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {},
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00006334",
+        "fetched_at": "2026-11-10T10:19+00:00",
+        "verified": false,
+        "extractor": "rules"
+      }
+    },
+    {
+      "id": "bokjiro_WLF00001153",
+      "name": "장애인보조견전문훈련기관지원",
+      "category": "비재무적 지원",
+      "support_type": "employment",
+      "icon": "💼",
+      "agency": "보건복지부",
+      "summary": "장애인보조견 보급을 통해 장애인의 안전하고 독립적인 보행 및 청각장애인의 소리 인지 등의 보조서비스를 제공합니다.",
+      "benefits": [
+        "장애인보조견 보급을 통해 장애인의 안전하고 독립적인 보행 및 청각장애인의 소리 인지 등의 보조서비스를 제공합니다."
+      ],
+      "requirements": [
+        "장애인보조견 보급을 통해 장애인의 안전하고 독립적인 보행 및 청각장애인의 소리 인지 등의 보조서비스를 제공합니다."
+      ],
+      "cautions": [
+        "자동 수집된 정보예요. 지원 내용과 금액은 공식 안내에서 확인하세요."
+      ],
+      "cashflow_rule": "직접 수입으로 반영하지 않습니다. 취업 후 급여는 별도로 가정합니다.",
+      "default_amount": 0,
+      "apply": "복지로 상세 안내 참고",
+      "contact": "보건복지상담센터 ☎ 129",
+      "links": [
+        {
+          "label": "복지로 상세 안내",
+          "url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00001153&wlfareInfoReldBztpCd=01"
+        }
+      ],
+      "criteria": {
+        "disability_types": [
+          "청각장애"
+        ]
+      },
+      "source": {
+        "type": "collected",
+        "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
+        "serv_id": "WLF00001153",
+        "fetched_at": "2026-11-10T10:19+00:00",
         "verified": false,
         "extractor": "rules"
       }
