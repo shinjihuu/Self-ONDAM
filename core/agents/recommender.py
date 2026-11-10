@@ -81,6 +81,15 @@ class RecommenderAgent:
         summary = [{"제도": self.by_id[r.program_id]["name"], "판정": r.status,
                     "월 예상 지원액": r.amount or None, "본인부담": r.copay or None, "금액 근거": r.amount_label or None}
                    for r in recs]
+        if profile.get("severity") == "심한 장애" and 18 <= profile.get("age", 0) < 65:
+            from core import benefits
+            earned_now, _ = benefits._income_by_kind(profile)
+            table = []
+            for sal in (800_000, 1_200_000, 1_600_000, 2_000_000, 2_500_000, 3_000_000):
+                est = benefits.pension_estimate(profile, earned_override=earned_now + sal)
+                ri, _ = benefits.recognized_income(profile, earned_override=earned_now + sal)
+                table.append({"취업 후 월급": sal, "소득인정액": ri, "장애인연금 월액": est.monthly})
+            summary.append({"취업 시 장애인연금 계산표 (2026년 기준, 자립ON 계산)": table})
         return ai.answer_question(question, profile, self.relevant(question, top_k), summary)
 
     def relevant(self, question: str, top_k: int = 6) -> list[dict]:
