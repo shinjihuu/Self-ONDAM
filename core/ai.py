@@ -26,6 +26,7 @@ DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
 DEFAULT_HF_MODEL = "Qwen/Qwen2.5-7B-Instruct"       # 한국어가 되는 무료 sLLM (7B)
 
 LAST_PROVIDER: str | None = None   # 마지막으로 응답에 성공한 AI
+LAST_ERROR: str | None = None      # 마지막 실패 원인 (진단용, 키는 포함하지 않음)
 
 
 def _secret(*names: str, default: str | None = None) -> str | None:
@@ -93,7 +94,9 @@ def _chat(user_prompt: str, max_tokens: int = 600, system: str = SYSTEM_PROMPT) 
             text = _call(p, user_prompt, max_tokens, system=system)
             LAST_PROVIDER = p["name"]
             return text
-        except Exception:  # 키 오류·한도 초과·네트워크 오류 → 다음 AI로
+        except Exception as e:  # 키 오류·한도 초과·네트워크 오류 → 다음 AI로
+            global LAST_ERROR
+            LAST_ERROR = f"{p['name']}({p['model']}): {type(e).__name__}: {str(e)[:200]}"
             continue
     return None
 

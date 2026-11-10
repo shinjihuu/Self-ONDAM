@@ -313,10 +313,20 @@ def _lines(text: str, n: int = 4) -> list[str]:
     return [p for p in parts if len(p) >= 4][:n]
 
 
+DISABILITY_NAME = r"장애|발달|척수|시각|청각|농아|보조기기"
+NOT_TARGET_NAME = r"실종|노숙|알코올|고엽제|산재|선천성대사|난청검사"
+
+
 def is_disability_target(item: dict, detail: dict) -> bool:
-    text = " ".join([item.get("servNm", ""), item.get("servDgst", ""), item.get("trgterIndvdlArray", ""),
-                     _join(detail, FIELD_TEXT_TARGET)])
-    return "장애" in text
+    """장애인 대상 제도인지. 요약에 '장애'가 스치듯 나오는 제도(실종아동, 산재 등)는 빼고,
+    제도명 또는 지원대상 문장이 장애인을 직접 가리키는 경우만 남긴다."""
+    name = item.get("servNm", "")
+    if re.search(NOT_TARGET_NAME, name):
+        return False
+    if re.search(DISABILITY_NAME, name):
+        return True
+    target = _join(detail, FIELD_TEXT_TARGET) + " " + item.get("trgterIndvdlArray", "")
+    return bool(re.search(r"장애인|장애아동|발달장애", target))
 
 
 def classify(item: dict, detail: dict) -> str:
@@ -324,8 +334,10 @@ def classify(item: dict, detail: dict) -> str:
     name = item.get("servNm", "")
     kind = item.get("srvPvsnNm", "") + " " + detail.get("srvPvsnNm", "")
     body = name + " " + item.get("servDgst", "") + " " + _join(detail, FIELD_TEXT_BENEFIT)
-    if re.search(r"저축|통장|자산형성|적금|대출|융자|이자", name + item.get("servDgst", "")):
+    if re.search(r"저축|통장|자산형성|적금|대출|대여|융자|이자", name + item.get("servDgst", "")):
         return "finance"
+    if re.search(r"보조기기|검사|진단|검진|의료비|보장구", name):      # 현물·서비스 지원
+        return "care"
     if re.search(r"취업|고용|일자리|직업|근로|출퇴근|훈련", name):
         return "employment"
     if "현금" in kind or re.search(r"수당|연금|급여|장려금|지원금", name):
@@ -448,7 +460,7 @@ registered("required"|"preferred"), employment_required / employment_priority / 
     if not out:
         _LLM_FAILS += 1
         if _LLM_FAILS == 3:
-            print("[수집 에이전트] AI 응답이 3번 연속 실패해 이후는 규칙 추출만 사용해요.", file=sys.stderr)
+            print(f"[수집 에이전트] AI 응답이 3번 연속 실패해 이후는 규칙 추출만 사용해요. 마지막 오류: {ai.LAST_ERROR}", file=sys.stderr)
         return heuristic, None
     _LLM_FAILS = 0
     m = re.search(r"\{.*\}", out, re.S)
@@ -461,6 +473,9 @@ registered("required"|"preferred"), employment_required / employment_priority / 
     return refined, provider
 
 
+CHILD_NAME = r"아동|장애아|보육|특수학교|특수학급|청소년|영유아"
+
+
 def normalize(item: dict, detail: dict, fetched_at: str, use_llm: bool, source: str = SOURCE_NAME) -> dict:
     sid = item.get("servId", "")
     name = item.get("servNm") or detail.get("servNm", "")
@@ -468,6 +483,8 @@ def normalize(item: dict, detail: dict, fetched_at: str, use_llm: bool, source: 
     category, icon, rule = TYPE_META[stype]
     target = _join(detail, FIELD_TEXT_TARGET) or item.get("servDgst", "")
     criteria = extract_criteria(target)
+    if re.search(CHILD_NAME, name) and "max_age" not in criteria:
+        criteria["max_age"] = 18                        # 아동·청소년 대상 제도 (제도명 기준)
     extractor = "rules"
     if use_llm:
         criteria, provider = refine_with_llm(name, target, criteria)
@@ -537,7 +554,7 @@ def main(argv=None) -> int:
     ap.add_argument("--source", choices=["odcloud", "bokjiro"], default="odcloud",
                     help="odcloud = 복지서비스정보(15083323, 기본) · bokjiro = 중앙부처복지서비스 API")
     ap.add_argument("--query", default="장애인")
-    ap.add_argument("--limit", type=int, default=40, help="저장할 장애인 대상 제도 최대 수")
+    ap.add_argument("--limit", type=int, default=100, help="저장할 장애인 대상 제도 최대 수")
     ap.add_argument("--from-file", type=Path, help="저장해 둔 odcloud 응답(JSON) 파일")
     ap.add_argument("--from-dir", type=Path, help="저장해 둔 API 응답(list.xml, detail_<servId>.xml) 폴더")
     ap.add_argument("--no-llm", action="store_true", help="AI 다듬기 생략")

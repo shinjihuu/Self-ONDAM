@@ -161,3 +161,24 @@ def test_odcloud_paging(monkeypatch):
     monkeypatch.setattr(col, "_get", fake_get)
     items, details, meta = col.fetch_from_odcloud()
     assert len(items) == 1500 and calls == [1, 2] and meta["snapshot"] == "uddi:test"
+
+
+def test_real_snapshot_names_filtered_and_classified():
+    """2026-11 실제 수집에서 확인된 제도명으로 선별·분류 규칙을 검증."""
+    keep = lambda n: col.is_disability_target({"servNm": n, "servDgst": "장애 관련"}, {})
+    for n in ("실종아동 등 보호 및 지원", "선천성대사이상 검사 및 환아관리", "고엽제환자2세수당",
+              "노숙자 등 알코올중독자 사례관리 사업", "산재근로자직업훈련"):
+        assert not keep(n), n
+    for n in ("장애인일자리지원", "발달장애인 공공후견지원 사업", "척수장애인재활훈련지원"):
+        assert keep(n), n
+    cls = lambda n: col.classify({"servNm": n}, {})
+    assert cls("장애인자립자금대여") == "finance"
+    assert cls("의료급여 장애인보조기기 지원") == "care"
+    assert cls("장애인일자리지원") == "employment"
+
+
+def test_child_programs_get_age_cap():
+    p = col.normalize({"servId": "X", "servNm": "장애아보육료지원", "servDgst": "장애아동 보육료"}, {}, "t", False)
+    assert p["criteria"]["max_age"] == 18
+    r = el.evaluate(p, DAUGHTER)
+    assert r.status == el.NO_MATCH          # 24세 딸에게는 '맞지 않음'

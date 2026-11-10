@@ -7,7 +7,7 @@ on:
     inputs:
       limit:
         description: "가져올 제도 수"
-        default: "40"
+        default: "100"
 
 permissions:
   contents: write
@@ -37,7 +37,7 @@ jobs:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python -m core.agents.collector --limit "${{ github.event.inputs.limit || '40' }}"
+        run: python -m core.agents.collector --limit "${{ github.event.inputs.limit || '100' }}"
 
       - name: 테스트 (수집 결과로 앱 계산이 깨지지 않는지)
         run: python -m pytest -q
