@@ -120,6 +120,44 @@ def test_api_error_inside_200_response(monkeypatch):
 def test_main_keeps_existing_file_on_api_failure(monkeypatch, tmp_path):
     out = tmp_path / "c.json"
     out.write_text("기존", encoding="utf-8")
-    monkeypatch.setattr(col, "fetch_from_api", lambda q, l: (_ for _ in ()).throw(col.ApiError("403")))
+    monkeypatch.setattr(col, "fetch_from_odcloud", lambda: (_ for _ in ()).throw(col.ApiError("403")))
     assert col.main(["--out", str(out)]) == 1
     assert out.read_text(encoding="utf-8") == "기존"
+
+
+# ── 복지서비스정보(odcloud) 형식 ──
+ODC = ROOT / "tests" / "fixtures" / "odcloud_sample.json"
+
+
+def test_odcloud_column_mapping():
+    cols = ["서비스아이디", "서비스명", "서비스목적요약", "소관부처명", "지원유형", "지원대상", "선정기준",
+            "지원내용", "신청방법", "전화문의", "상세조회URL"]
+    m = col.map_columns(cols)
+    assert m["servNm"] == "서비스명" and m["servId"] == "서비스아이디" and m["servDgst"] == "서비스목적요약"
+    assert m["tgtrDtlCn"] == "지원대상" and m["alwServCn"] == "지원내용" and m["servDtlLink"] == "상세조회URL"
+
+
+def test_odcloud_file_collect():
+    items, details, meta = col.fetch_from_odcloud_file(ODC)
+    res = col.collect(items, details, use_llm=False, source=meta["source"], max_keep=10)
+    names = [p["name"] for p in res["programs"]]
+    assert names == ["[샘플] 장애인 자립수당", "[샘플] 발달장애인 낮활동 바우처"]   # 연금(중복)·청년(대상 아님) 제외
+    p = res["programs"][0]
+    assert p["support_type"] == "cash" and p["criteria"]["min_age"] == 18
+    assert p["apply"].startswith("주소지") and p["source"]["name"] == col.ODCLOUD_SOURCE
+
+
+def test_odcloud_paging(monkeypatch):
+    import json as _j
+    rows = [{"서비스아이디": f"S{i}", "서비스명": f"[샘플] 장애인 서비스 {i}", "지원대상": "등록 장애인"} for i in range(1500)]
+    calls = []
+
+    def fake_get(url, params, retries=3):
+        calls.append(params.get("page"))
+        p, n = params["page"], params["perPage"]
+        return _j.dumps({"totalCount": 1500, "data": rows[(p - 1) * n:p * n]}, ensure_ascii=False)
+    monkeypatch.setenv("DATA_GO_KR_KEY", "k")
+    monkeypatch.setenv("ODCLOUD_UDDI", "uddi:test")
+    monkeypatch.setattr(col, "_get", fake_get)
+    items, details, meta = col.fetch_from_odcloud()
+    assert len(items) == 1500 and calls == [1, 2] and meta["snapshot"] == "uddi:test"

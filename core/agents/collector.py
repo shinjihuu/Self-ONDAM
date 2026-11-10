@@ -1,7 +1,8 @@
 """수집 에이전트 — 공식 공공데이터에서 장애인 대상 지원제도를 모아 구조화한다.
 
 흐름
-  1. 수집(fetch)   공공데이터포털 · 한국사회보장정보원 「중앙부처복지서비스」 목록·상세 API 호출
+  1. 수집(fetch)   기본: 공공데이터포털 「한국사회보장정보원_복지서비스정보」(15083323, odcloud) 최신 스냅샷
+                    대안: 「중앙부처복지서비스」 목록·상세 API (--source bokjiro)
   2. 선별(filter)  장애인 대상 제도만 남기고, 수작업 정리 제도(programs.json)와 겹치는 것은 제외
   3. 분류(classify) 제공유형·본문으로 현금지원 / 돌봄 / 고용 / 금융·자산형성 구분 → 재무·비재무 분류
   4. 구조화(extract) 대상·선정기준 문장에서 나이·장애유형·장애정도·취업상태 조건을 규칙으로 추출하고,
@@ -39,6 +40,13 @@ API_BASE = os.environ.get("WELFARE_API_BASE",
 LIST_URL = f"{API_BASE}/NationalWelfarelistV001"
 DETAIL_URL = f"{API_BASE}/NationalWelfaredetailedV001"
 SOURCE_NAME = "공공데이터포털 · 한국사회보장정보원 중앙부처복지서비스"
+
+# 기본 소스: 「한국사회보장정보원_복지서비스정보」(15083323) — 파일데이터 기반 오픈API(odcloud), 연도별 스냅샷 제공
+ODCLOUD_BASE = "https://api.odcloud.kr/api"
+ODCLOUD_NS = os.environ.get("ODCLOUD_NAMESPACE", "15083323/v1")
+ODCLOUD_UDDI = os.environ.get("ODCLOUD_UDDI", "uddi:e02ed092-d46d-4bf2-8e7e-c3441e950fef")   # 복지서비스정보_20260819
+ODCLOUD_SWAGGER = "https://infuser.odcloud.kr/oas/docs?namespace={ns}"
+ODCLOUD_SOURCE = "공공데이터포털 · 한국사회보장정보원 복지서비스정보"
 BOKJIRO_DETAIL = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId={}"
 
 FIELD_LIST_ITEM = "servList"
@@ -67,6 +75,7 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; JaripON-collector/1.0)", "Acc
 API_ERROR_HINTS = {
     "SERVICE_KEY_IS_NOT_REGISTERED": "인증키가 등록되지 않았어요. 활용신청 승인 후 키가 동기화되기까지 1~2시간 걸릴 수 있어요. "
                                      "‘일반 인증키(Decoding)’를 넣었는지도 확인하세요.",
+    "등록되지 않은 인증키": "인증키가 이 데이터에 등록되지 않았어요. 활용신청 승인 후 1~2시간 기다려 주세요.",
     "Unauthorized": "인증키가 없거나 잘못됐어요. 이 API(중앙부처복지서비스)에 활용신청이 승인됐는지 마이페이지에서 확인하세요.",
     "BLACKLIST_IP": "호출한 서버 IP가 차단됐어요. 해외 IP(GitHub 서버)가 막힌 경우라 국내에서 실행해야 해요.",
     "LIMITED_NUMBER_OF_SERVICE_REQUESTS": "일일 호출 한도를 넘었어요. 내일 다시 실행하거나 --limit 값을 줄이세요.",
@@ -86,6 +95,8 @@ def _diagnose(status: int | None, body: str) -> str:
     if status == 403:
         return ("HTTP 403 (접근 거부). 흔한 원인: ① 활용신청 미승인·키 동기화 대기(승인 후 1~2시간) "
                 "② 해외 IP 차단(GitHub 서버는 미국 IP) ③ 디코딩/인코딩 키 혼동")
+    if status == 401:
+        return "HTTP 401 — 인증키가 없거나 이 데이터에 활용신청이 승인되지 않았어요."
     if status == 404:
         return "HTTP 404 — API 주소가 바뀌었을 수 있어요. 공공데이터포털 명세의 요청주소를 확인하세요."
     return f"HTTP {status}"
@@ -105,7 +116,7 @@ def _get(url: str, params: dict, retries: int = 3) -> str:
                 with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
                     text = r.read().decode("utf-8", errors="replace")
                 for code, hint in API_ERROR_HINTS.items():   # 200 응답 안에 오류가 담겨 오는 경우
-                    if code in text and "<servList>" not in text and "<servId>" not in text:
+                    if len(text) < 3000 and code in text and "<servList>" not in text and "<servId>" not in text:
                         raise ApiError(f"{code} — {hint}\n응답 일부: {mask(text[:300])}")
                 return text
             except ApiError:
@@ -180,6 +191,112 @@ def fetch_from_dir(d: Path) -> tuple[list[dict], dict[str, dict]]:
         if f.exists():
             details[it["servId"]] = parse_detail(f.read_text(encoding="utf-8"))
     return items, details
+
+
+# ─────────────────────────── 1-b. 수집 (복지서비스정보 · odcloud) ───────────────────────────
+# 열 이름은 스냅샷마다 조금씩 다를 수 있어, 키워드로 찾아 내부 필드에 연결한다.
+COLUMN_KEYS = {
+    "servId": ("서비스아이디", "서비스ID", "서비스번호"),
+    "servNm": ("서비스명",),
+    "servDgst": ("서비스목적요약", "서비스요약", "서비스목적", "요약"),
+    "jurMnofNm": ("소관부처", "소관기관", "부처명", "기관명"),
+    "srvPvsnNm": ("지원유형", "제공유형", "급여유형"),
+    "servDtlLink": ("상세조회URL", "상세URL", "URL", "링크"),
+    "tgtrDtlCn": ("지원대상",),
+    "slctCritCn": ("선정기준",),
+    "alwServCn": ("지원내용",),
+    "apply": ("신청방법",),
+    "contact": ("문의처", "전화문의", "문의"),
+    "trgterIndvdlArray": ("대상자", "가구유형", "대상특성", "생애주기"),
+}
+
+
+def map_columns(columns) -> dict[str, str]:
+    """{내부 필드: 실제 열 이름}"""
+    cols = list(columns)
+    norm = {c: re.sub(r"\s", "", c) for c in cols}
+    out, used = {}, set()
+    for field, keys in COLUMN_KEYS.items():
+        for k in keys:
+            hit = next((c for c in cols if c not in used and k in norm[c]), None)
+            if hit:
+                out[field] = hit
+                used.add(hit)
+                break
+    return out
+
+
+def row_to_item_detail(row: dict, cmap: dict) -> tuple[dict, dict]:
+    g = lambda f: str(row.get(cmap.get(f, ""), "") or "").strip()
+    item = {k: g(k) for k in ("servId", "servNm", "servDgst", "jurMnofNm", "srvPvsnNm", "servDtlLink", "trgterIndvdlArray")}
+    if not item["servId"]:
+        item["servId"] = re.sub(r"\W", "", item["servNm"])[:30]
+    detail = {k: g(k) for k in ("tgtrDtlCn", "slctCritCn", "alwServCn")}
+    if g("apply"):
+        detail["applmetList"] = [{"servSeDetailNm": g("apply")[:200]}]
+    if g("contact"):
+        detail["inqplCtadrList"] = [{"servSeDetailNm": g("contact")[:200]}]
+    return item, detail
+
+
+def latest_uddi(ns: str = ODCLOUD_NS) -> str:
+    """Swagger 문서에서 가장 최신 날짜의 스냅샷을 찾는다. 실패하면 기본값."""
+    try:
+        spec = json.loads(_get(ODCLOUD_SWAGGER.format(ns=ns), {}, retries=1))
+        cands = []
+        for path, ops in spec.get("paths", {}).items():
+            text = json.dumps(ops, ensure_ascii=False)
+            m = re.search(r"(20\d{6})", text)
+            u = re.search(r"(uddi:[0-9a-f\-_]+)", path)
+            if m and u:
+                cands.append((m.group(1), u.group(1)))
+        if cands:
+            return max(cands)[1]
+    except Exception as e:
+        print(f"[수집 에이전트] 최신 스냅샷 자동 확인 실패, 기본값 사용: {str(e).splitlines()[0]}", file=sys.stderr)
+    return ODCLOUD_UDDI
+
+
+def fetch_from_odcloud(max_pages: int = 30) -> tuple[list[dict], dict[str, dict], dict]:
+    key = _service_key()
+    if not key:
+        raise SystemExit("DATA_GO_KR_KEY가 없습니다.")
+    uddi = os.environ.get("ODCLOUD_UDDI") or latest_uddi()
+    url = f"{ODCLOUD_BASE}/{ODCLOUD_NS}/{uddi}"
+    rows, page, total = [], 1, None
+    while page <= max_pages:
+        data = json.loads(_get(url, {"serviceKey": key, "page": page, "perPage": 1000, "returnType": "JSON"}))
+        batch = data.get("data") or []
+        total = data.get("totalCount", total)
+        rows += batch
+        if not batch or (total is not None and len(rows) >= int(total)):
+            break
+        page += 1
+    if not rows:
+        raise ApiError(f"데이터가 비어 있어요 (스냅샷 {uddi}).")
+    cmap = map_columns(rows[0].keys())
+    print(f"[수집 에이전트] 스냅샷 {uddi} · {len(rows)}행 · 열 {list(rows[0].keys())}", file=sys.stderr)
+    print(f"[수집 에이전트] 열 연결 {cmap}", file=sys.stderr)
+    if "servNm" not in cmap:
+        raise ApiError(f"‘서비스명’ 열을 찾지 못했어요. 실제 열 이름: {list(rows[0].keys())} → COLUMN_KEYS를 고쳐 주세요.")
+    items, details = [], {}
+    for r in rows:
+        it, d = row_to_item_detail(r, cmap)
+        items.append(it)
+        details[it["servId"]] = d
+    return items, details, {"source": ODCLOUD_SOURCE, "snapshot": uddi, "columns": cmap}
+
+
+def fetch_from_odcloud_file(path: Path) -> tuple[list[dict], dict[str, dict], dict]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    rows = data["data"]
+    cmap = map_columns(rows[0].keys())
+    items, details = [], {}
+    for r in rows:
+        it, d = row_to_item_detail(r, cmap)
+        items.append(it)
+        details[it["servId"]] = d
+    return items, details, {"source": ODCLOUD_SOURCE, "snapshot": path.name, "columns": cmap}
 
 
 # ─────────────────────────── 2~4. 선별 · 분류 · 구조화 ───────────────────────────
@@ -307,10 +424,14 @@ def validate_criteria(raw: dict) -> dict:
     return out
 
 
+_LLM_FAILS = 0
+
+
 def refine_with_llm(name: str, target_text: str, heuristic: dict) -> tuple[dict, str | None]:
     """AI로 조건을 다듬는다. 실패하거나 AI가 없으면 규칙 추출 결과를 그대로 쓴다."""
+    global _LLM_FAILS
     from core import ai
-    if not ai.ai_available() or not target_text:
+    if not ai.ai_available() or not target_text or _LLM_FAILS >= 3:   # 3번 연속 실패하면 규칙 추출만 사용
         return heuristic, None
     prompt = f"""제도명: {name}
 대상·선정기준 원문:
@@ -325,7 +446,11 @@ registered("required"|"preferred"), employment_required / employment_priority / 
 원문에 근거해 1차 결과를 고친 최종 JSON만 출력해."""
     out, provider = ai.complete(prompt, LLM_SYSTEM, 500)
     if not out:
+        _LLM_FAILS += 1
+        if _LLM_FAILS == 3:
+            print("[수집 에이전트] AI 응답이 3번 연속 실패해 이후는 규칙 추출만 사용해요.", file=sys.stderr)
         return heuristic, None
+    _LLM_FAILS = 0
     m = re.search(r"\{.*\}", out, re.S)
     try:
         refined = validate_criteria(json.loads(m.group(0))) if m else None
@@ -336,7 +461,7 @@ registered("required"|"preferred"), employment_required / employment_priority / 
     return refined, provider
 
 
-def normalize(item: dict, detail: dict, fetched_at: str, use_llm: bool) -> dict:
+def normalize(item: dict, detail: dict, fetched_at: str, use_llm: bool, source: str = SOURCE_NAME) -> dict:
     sid = item.get("servId", "")
     name = item.get("servNm") or detail.get("servNm", "")
     stype = classify(item, detail)
@@ -351,7 +476,7 @@ def normalize(item: dict, detail: dict, fetched_at: str, use_llm: bool) -> dict:
     apply = "; ".join(x.get("servSeDetailNm", "") for x in detail.get("applmetList", []) if x.get("servSeDetailNm"))
     contact = "; ".join(f"{x.get('servSeDetailNm', '')} {x.get('servSeDetailLink', '')}".strip()
                         for x in detail.get("inqplCtadrList", []))
-    link = item.get("servDtlLink") or BOKJIRO_DETAIL.format(sid)
+    link = item.get("servDtlLink") or (BOKJIRO_DETAIL.format(sid) if re.fullmatch(r"WLF\w+", sid or "") else "https://www.bokjiro.go.kr")
     agency = " · ".join(x for x in [item.get("jurMnofNm"), item.get("jurOrgNm")] if x)
     return {
         "id": f"bokjiro_{sid}",
@@ -370,13 +495,14 @@ def normalize(item: dict, detail: dict, fetched_at: str, use_llm: bool) -> dict:
         "contact": contact or item.get("rprsCtadr") or "보건복지상담센터 ☎ 129",
         "links": [{"label": "복지로 상세 안내", "url": link}],
         "criteria": criteria,
-        "source": {"type": "collected", "name": SOURCE_NAME, "serv_id": sid, "fetched_at": fetched_at,
+        "source": {"type": "collected", "name": source, "serv_id": sid, "fetched_at": fetched_at,
                    "verified": False, "extractor": extractor},
     }
 
 
 # ─────────────────────────── 5. 실행 · 저장 ───────────────────────────
-def collect(items: list[dict], details: dict[str, dict], use_llm: bool = True) -> dict:
+def collect(items: list[dict], details: dict[str, dict], use_llm: bool = True,
+            source: str = SOURCE_NAME, max_keep: int | None = None, extra_meta: dict | None = None) -> dict:
     curated = json.loads(CURATED_PATH.read_text(encoding="utf-8"))["programs"]
     curated_names = {_norm(p["name"]) for p in curated}
     fetched_at = datetime.now(timezone.utc).astimezone().isoformat(timespec="minutes")
@@ -392,12 +518,14 @@ def collect(items: list[dict], details: dict[str, dict], use_llm: bool = True) -
             dup += 1
             continue
         seen.add(key)
-        programs.append(normalize(it, d, fetched_at, use_llm))
+        if max_keep is not None and len(programs) >= max_keep:
+            continue
+        programs.append(normalize(it, d, fetched_at, use_llm, source))
     types = {}
     for p in programs:
         types[p["support_type"]] = types.get(p["support_type"], 0) + 1
     return {
-        "meta": {"collected_at": fetched_at, "source": SOURCE_NAME, "fetched": len(items), "kept": len(programs),
+        "meta": {"collected_at": fetched_at, "source": source, **(extra_meta or {}), "fetched": len(items), "kept": len(programs),
                  "skipped_duplicates": dup, "skipped_off_target": off_target, "by_type": types,
                  "notice": "자동 수집된 제도는 검수 전이며, 추천 에이전트는 이 제도들을 ‘우선 확인’으로 올리지 않습니다."},
         "programs": programs,
@@ -406,18 +534,31 @@ def collect(items: list[dict], details: dict[str, dict], use_llm: bool = True) -
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="자립ON 지원제도 수집 에이전트")
+    ap.add_argument("--source", choices=["odcloud", "bokjiro"], default="odcloud",
+                    help="odcloud = 복지서비스정보(15083323, 기본) · bokjiro = 중앙부처복지서비스 API")
     ap.add_argument("--query", default="장애인")
-    ap.add_argument("--limit", type=int, default=40)
+    ap.add_argument("--limit", type=int, default=40, help="저장할 장애인 대상 제도 최대 수")
+    ap.add_argument("--from-file", type=Path, help="저장해 둔 odcloud 응답(JSON) 파일")
     ap.add_argument("--from-dir", type=Path, help="저장해 둔 API 응답(list.xml, detail_<servId>.xml) 폴더")
     ap.add_argument("--no-llm", action="store_true", help="AI 다듬기 생략")
     ap.add_argument("--out", type=Path, default=OUTPUT_PATH)
     a = ap.parse_args(argv)
     try:
-        items, details = fetch_from_dir(a.from_dir) if a.from_dir else fetch_from_api(a.query, a.limit)
+        meta = {"source": SOURCE_NAME}
+        if a.from_dir:
+            items, details = fetch_from_dir(a.from_dir)
+        elif a.from_file:
+            items, details, meta = fetch_from_odcloud_file(a.from_file)
+        elif a.source == "odcloud":
+            items, details, meta = fetch_from_odcloud()
+        else:
+            items, details = fetch_from_api(a.query, a.limit)
     except ApiError as e:
         print(f"[수집 에이전트] ❌ 공공데이터 API 호출 실패 — 기존 데이터는 그대로 둡니다.\n{e}", file=sys.stderr)
         return 1
-    result = collect(items, details, use_llm=not a.no_llm)
+    src = meta.pop("source")
+    meta.pop("columns", None)
+    result = collect(items, details, use_llm=not a.no_llm, source=src, max_keep=a.limit, extra_meta=meta)
     a.out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     m = result["meta"]
     print(f"[수집 에이전트] 가져옴 {m['fetched']} · 저장 {m['kept']} · 중복 제외 {m['skipped_duplicates']} · "
