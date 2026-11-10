@@ -116,90 +116,100 @@ def test_profile_totals_consistent():
         assert p["monthly_expense"] == sum(i["amount"] for i in p["expense_items"])
 
 
-# ── AI 공급자 순서: OpenAI → Hugging Face → 규칙 기반 ──
+# ── AI 공급자 순서: OpenAI → Gemini → Groq → Hugging Face → 규칙 기반 ──
 from core import ai
 
+ALL_KEYS = ("OPENAI_API_KEY", "OPENAI_MODEL", "GEMINI_API_KEY", "GOOGLE_API_KEY", "GEMINI_MODEL",
+            "GROQ_API_KEY", "GROQ_MODEL", "HF_TOKEN", "HUGGINGFACEHUB_API_TOKEN", "HF_MODEL")
 
-def _clear_env(monkeypatch):
-    for k in ("OPENAI_API_KEY", "OPENAI_MODEL", "HF_TOKEN", "HUGGINGFACEHUB_API_TOKEN", "HF_MODEL"):
+
+@pytest.fixture(autouse=False)
+def clean_ai(monkeypatch):
+    for k in ALL_KEYS:
         monkeypatch.delenv(k, raising=False)
+    monkeypatch.setattr(ai, "_WORKING", {})
+    monkeypatch.setattr(ai, "_BAD", set())
+    monkeypatch.setattr(ai, "_DISABLED", {})
+    return monkeypatch
 
 
-def test_provider_order(monkeypatch):
-    _clear_env(monkeypatch)
+class _Err(Exception):
+    def __init__(self, status, msg=""):
+        super().__init__(msg or f"HTTP {status}")
+        self.status_code = status
+
+
+def test_provider_order(clean_ai):
+    mp = clean_ai
     assert ai.providers() == [] and not ai.ai_available()
-    monkeypatch.setenv("HF_TOKEN", "hf_x")
+    mp.setenv("HF_TOKEN", "hf_x")
     ps = ai.providers()
     assert [p["name"] for p in ps] == ["Hugging Face"]
     assert ps[0]["base_url"] == ai.HF_BASE_URL and ps[0]["model"] == ai.DEFAULT_HF_MODEL
-    monkeypatch.setenv("OPENAI_API_KEY", "sk-x")
-    assert [p["name"] for p in ai.providers()] == ["OpenAI", "Hugging Face"]
+    mp.setenv("GROQ_API_KEY", "g")
+    mp.setenv("GEMINI_API_KEY", "m")
+    mp.setenv("OPENAI_API_KEY", "sk-x")
+    assert [p["name"] for p in ai.providers()] == ["OpenAI", "Gemini", "Groq", "Hugging Face"]
+    mp.setenv("GROQ_MODEL", "llama-3.1-8b-instant")
+    assert next(p for p in ai.providers() if p["name"] == "Groq")["models"] == ["llama-3.1-8b-instant"]
 
 
-def test_fallback_to_hf_when_openai_fails(monkeypatch):
-    _clear_env(monkeypatch)
-    monkeypatch.setenv("OPENAI_API_KEY", "sk-x")
-    monkeypatch.setenv("HF_TOKEN", "hf_x")
+def test_fallback_to_next_service(clean_ai):
+    mp = clean_ai
+    mp.setenv("OPENAI_API_KEY", "sk-x")
+    mp.setenv("HF_TOKEN", "hf_x")
     calls = []
 
     def fake_call(p, prompt, max_tokens, **kw):
         calls.append(p["name"])
         if p["name"] == "OpenAI":
-            raise RuntimeError("quota")
+            raise _Err(429, "quota")
         return "허깅페이스 답변이에요."
-    monkeypatch.setattr(ai, "_call", fake_call)
+    mp.setattr(ai, "_call", fake_call)
     text, by = ai.answer_question("장애인연금은?", {}, [])
     assert calls == ["OpenAI", "Hugging Face"]
     assert text == "허깅페이스 답변이에요." and by == "Hugging Face"
 
 
-def test_rule_fallback_when_all_fail(monkeypatch):
-    _clear_env(monkeypatch)
-    monkeypatch.setenv("HF_TOKEN", "hf_x")
-    monkeypatch.setattr(ai, "_call", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("down")))
+def test_rule_fallback_when_all_fail(clean_ai):
+    mp = clean_ai
+    mp.setenv("HF_TOKEN", "hf_x")
+    mp.setattr(ai, "_call", lambda *a, **k: (_ for _ in ()).throw(_Err(500, "down")))
     progs = json.loads((DATA / "programs.json").read_text(encoding="utf-8"))["programs"]
     text, by = ai.answer_question("장애인연금 신청은 어디서 해요?", {}, progs)
     assert by is False and "장애인연금" in text
 
 
-
-def test_hf_model_fallback(monkeypatch):
-    """지원되지 않는 HF 모델은 건너뛰고 다음 후보로, 성공한 모델은 기억한다."""
-    _clear_env(monkeypatch)
-    monkeypatch.setenv("HF_TOKEN", "hf_x")
-    monkeypatch.setattr(ai, "_HF_WORKING", None)
-    monkeypatch.setattr(ai, "_HF_BAD", set())
+def test_unsupported_model_tries_next_and_remembers(clean_ai):
+    mp = clean_ai
+    mp.setenv("GROQ_API_KEY", "g")
     tried = []
-
-    class NotSupported(Exception):
-        status_code = 400
-
-    def fake_call(p, prompt, max_tokens, **kw):
-        tried.append(p["model"])
-        if p["model"] == ai.HF_CANDIDATES[0]:
-            raise NotSupported("model is not supported by any provider you have enabled")
-        return "답변"
-    monkeypatch.setattr(ai, "_call", fake_call)
-    assert ai._chat("q") == "답변"
-    assert tried == ai.HF_CANDIDATES[:2]
-    assert ai.providers()[0]["models"][0] == ai.HF_CANDIDATES[1]     # 성공한 모델이 맨 앞
-    assert ai.HF_CANDIDATES[0] not in ai.providers()[0]["models"]
-
-
-def test_hf_auth_error_stops_trying_models(monkeypatch):
-    _clear_env(monkeypatch)
-    monkeypatch.setenv("HF_TOKEN", "hf_x")
-    monkeypatch.setattr(ai, "_HF_WORKING", None)
-    monkeypatch.setattr(ai, "_HF_BAD", set())
-    tried = []
-
-    class Auth(Exception):
-        status_code = 401
 
     def fake_call(p, *a, **k):
         tried.append(p["model"])
-        raise Auth("invalid token")
-    monkeypatch.setattr(ai, "_call", fake_call)
+        if p["model"] == "openai/gpt-oss-20b":
+            raise _Err(400, "model_not_supported")
+        return "답변"
+    mp.setattr(ai, "_call", fake_call)
+    assert ai._chat("q") == "답변"
+    assert tried == ["openai/gpt-oss-20b", "llama-3.1-8b-instant"]
+    assert ai.providers()[0]["models"][0] == "llama-3.1-8b-instant"
+
+
+def test_no_credit_disables_service_but_others_continue(clean_ai):
+    """HF 402(크레딧 없음)는 HF만 끄고, 다른 모델을 헛되이 시도하지 않는다."""
+    mp = clean_ai
+    mp.setenv("GROQ_API_KEY", "g")
+    mp.setenv("HF_TOKEN", "hf_x")
+    tried = []
+
+    def fake_call(p, *a, **k):
+        tried.append(p["name"])
+        if p["name"] == "Groq":
+            raise _Err(429, "rate limit")
+        raise _Err(402, "Purchase pre-paid credits")
+    mp.setattr(ai, "_call", fake_call)
     assert ai._chat("q") is None
-    assert tried == [ai.HF_CANDIDATES[0]]          # 키 문제는 다른 모델로 바꿔도 같으니 바로 중단
-    assert "invalid token" in ai.LAST_ERROR
+    assert tried == ["Groq", "Hugging Face"]               # HF는 모델 하나만 시도
+    assert [p["name"] for p in ai.providers()] == ["Groq"]  # HF는 이번 실행에서 제외
+    assert "credits" in ai._DISABLED["Hugging Face"]

@@ -94,10 +94,12 @@ with st.sidebar:
     if ai.ai_available():
         st.markdown(ui.badge("AI 연결됨 · " + ai.provider_label(), "ok"), unsafe_allow_html=True)
         if len(ai.providers()) > 1:
-            st.caption("OpenAI가 응답하지 않으면 Hugging Face 무료 sLLM으로 자동 전환돼요.")
+            st.caption("응답하지 않으면 " + " → ".join(p["name"] for p in ai.providers()[1:]) + " 순서로 자동 전환돼요.")
     else:
         st.markdown(ui.badge("AI 미연결 · 규칙 기반 설명", "more"), unsafe_allow_html=True)
-        st.caption("Secrets에 `OPENAI_API_KEY`(유료) 또는 `HF_TOKEN`(무료)을 넣으면 AI 설명이 켜져요.")
+        st.caption("Secrets에 `GEMINI_API_KEY` 또는 `GROQ_API_KEY`(무료 사용량), `OPENAI_API_KEY`(유료)를 넣으면 AI 설명이 켜져요.")
+    for name, why in ai._DISABLED.items():
+        st.caption(f"⚠️ {name} 사용 불가: " + ("크레딧 없음" if "402" in why or "credit" in why.lower() else "키 확인 필요"))
     st.divider()
     st.caption("ⓘ 이 서비스는 지원제도 **확인 우선순위**를 안내할 뿐, 수급 여부를 확정하지 않아요. "
                "주민등록번호·계좌번호 등 민감정보는 입력받지 않아요.")

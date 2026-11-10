@@ -82,15 +82,18 @@ streamlit run app.py
 
 ### AI 연결 (자동 선택)
 
-| 순서 | 조건 | 사용하는 AI |
-| --- | --- | --- |
-| 1 | `OPENAI_API_KEY`가 있으면 | OpenAI (`OPENAI_MODEL`, 기본 `gpt-4o-mini`) |
-| 2 | 없거나 실패하면 + `HF_TOKEN`이 있으면 | Hugging Face 무료 sLLM (지원되는 모델 자동 선택: Llama-3.1-8B → Qwen2.5-72B → Gemma-3-27B → gpt-oss-20b, `HF_MODEL`로 고정 가능) |
-| 3 | 둘 다 없거나 실패하면 | 규칙 기반 설명 (모든 기능 정상 작동) |
+키가 있는 서비스만 아래 순서로 시도하고, 모두 안 되면 **규칙 기반 설명**으로 바뀌어요. 이때도 모든 기능은 정상 작동해요.
 
-- 무료 HF 토큰은 https://huggingface.co/settings/tokens 에서 발급받아요. Fine-grained 토큰을 만들 때 **Make calls to Inference Providers** 권한을 체크하세요.
-- Hugging Face 무료 계정은 매달 제공되는 무료 사용량 안에서 쓸 수 있어요. 다 쓰면 자동으로 규칙 기반 설명으로 바뀌어요.
-- 로컬에서는 `.streamlit/secrets.toml.example`을 `secrets.toml`로 복사해서 쓰고, Streamlit Cloud에서는 Settings → Secrets에 넣어요.
+| 순서 | Secrets 키 | 서비스 · 모델 후보 | 비용 |
+| --- | --- | --- | --- |
+| 1 | `OPENAI_API_KEY` | OpenAI · gpt-4o-mini | 유료 |
+| 2 | `GEMINI_API_KEY` | Google Gemini · gemini-2.5-flash 등 | 무료 사용량 |
+| 3 | `GROQ_API_KEY` | Groq · gpt-oss-20b, Llama-3.1-8B 등 | 무료 사용량 |
+| 4 | `HF_TOKEN` | Hugging Face · Llama-3.1-8B, Qwen3.5-9B 등 | 크레딧 필요 |
+
+- 서비스마다 모델 후보를 순서대로 시도하고, 처음 성공한 모델을 계속 써요. `GEMINI_MODEL`처럼 `<서비스>_MODEL`로 고정할 수도 있어요.
+- 키 오류나 크레딧 없음(402)은 그 서비스만 건너뛰고 다음 서비스로 넘어가요.
+- `python scripts/ai_check.py` 또는 GitHub Actions의 **AI 연결 점검**으로 키 권한과 모델별 응답을 확인할 수 있어요.
 
 테스트 (보고서의 재무비율 12개, 기획서 예시 +420만 원, 적금 이자, 추천 규칙 검증):
 

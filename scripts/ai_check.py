@@ -47,10 +47,28 @@ def req(url: str, body: dict | None = None, timeout: int = 60) -> tuple[int, str
         return 0, f"{type(e).__name__}: {e}"
 
 
+def check_other_services() -> None:
+    """Gemini·Groq·OpenAI 키가 있으면 자립ON과 같은 방식(core.ai)으로 실제 호출해 본다."""
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+    from core import ai
+    for p in ai.providers():
+        if p["name"] == "Hugging Face":
+            continue
+        print(f"\n== {p['name']} ==")
+        for m in p["models"]:
+            try:
+                out = ai._call({**p, "model": m}, "장애인연금이 뭔지 한 문장으로 쉽게 설명해 주세요.", 80, system="한국어로 짧게 답해.")
+                print(f"✅ {m}: {out[:90]}")
+                break
+            except Exception as e:
+                print(f"❌ {m}: {type(e).__name__}: {str(e)[:200]}")
+
+
 def main() -> int:
+    check_other_services()
     if not TOKEN:
-        print("HF_TOKEN이 비어 있어요.")
-        return 1
+        print("\nHF_TOKEN이 비어 있어 Hugging Face 점검은 건너뛰어요.")
+        return 0
     print(f"토큰 형식: {'hf_로 시작' if TOKEN.startswith('hf_') else '⚠️ hf_로 시작하지 않음'} · {len(TOKEN)}자")
 
     print("\n== 1. 토큰 정보 (whoami) ==")

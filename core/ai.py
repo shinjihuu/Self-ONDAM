@@ -22,19 +22,30 @@ SYSTEM_PROMPT = """너는 '자립ON'의 AI 길잡이야. 발달장애인과 보�
 """
 
 
-HF_BASE_URL = "https://router.huggingface.co/v1"   # Hugging Face Inference Providers (OpenAI 호환)
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
-# Hugging Face 제공자가 지원하는 모델은 수시로 바뀌므로, 후보를 순서대로 시도하고 처음 성공한 모델을 계속 쓴다.
-# (HF_MODEL을 지정하면 그 모델만 사용)
-HF_CANDIDATES = [
-    "meta-llama/Llama-3.1-8B-Instruct",   # 8B sLLM
-    "Qwen/Qwen2.5-72B-Instruct",          # 한국어 품질이 좋은 대안
-    "google/gemma-3-27b-it",
-    "openai/gpt-oss-20b",
+
+# OpenAI 호환 API를 제공하는 AI 서비스들. 키가 있는 서비스만, 아래 순서대로 시도한다.
+# 각 서비스의 모델은 후보를 순서대로 시도하고 처음 성공한 모델을 계속 쓴다. (<NAME>_MODEL로 고정 가능)
+# Hugging Face 후보는 2026-11 라우터 점검(scripts/ai_check.py)에서 제공자가 있는 것으로 확인된 모델이다.
+PROVIDERS = [
+    {"name": "OpenAI", "keys": ("OPENAI_API_KEY",), "base_url": None, "model_env": "OPENAI_MODEL",
+     "models": [DEFAULT_OPENAI_MODEL]},
+    {"name": "Gemini", "keys": ("GEMINI_API_KEY", "GOOGLE_API_KEY"),
+     "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/", "model_env": "GEMINI_MODEL",
+     "models": ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.0-flash"]},
+    {"name": "Groq", "keys": ("GROQ_API_KEY",), "base_url": "https://api.groq.com/openai/v1", "model_env": "GROQ_MODEL",
+     "models": ["openai/gpt-oss-20b", "llama-3.1-8b-instant", "llama-3.3-70b-versatile"]},
+    {"name": "Hugging Face", "keys": ("HF_TOKEN", "HUGGINGFACEHUB_API_TOKEN"),
+     "base_url": "https://router.huggingface.co/v1", "model_env": "HF_MODEL",
+     "models": ["meta-llama/Llama-3.1-8B-Instruct", "Qwen/Qwen3.5-9B", "google/gemma-4-26B-A4B-it", "openai/gpt-oss-20b"]},
 ]
+HF_BASE_URL = PROVIDERS[3]["base_url"]
+HF_CANDIDATES = PROVIDERS[3]["models"]
 DEFAULT_HF_MODEL = HF_CANDIDATES[0]
-_HF_WORKING: str | None = None    # 이번 실행에서 성공한 모델
-_HF_BAD: set[str] = set()         # 지원되지 않는 것으로 확인된 모델
+
+_WORKING: dict[str, str] = {}          # 서비스별로 이번 실행에서 성공한 모델
+_BAD: set[tuple[str, str]] = set()     # (서비스, 모델) 지원되지 않는 것으로 확인됨
+_DISABLED: dict[str, str] = {}         # 키·크레딧 문제로 이번 실행에서 건너뛸 서비스 → 이유
 
 LAST_PROVIDER: str | None = None   # 마지막으로 응답에 성공한 AI
 LAST_ERROR: str | None = None      # 마지막 실패 원인 (진단용, 키는 포함하지 않음)
@@ -55,22 +66,20 @@ def _secret(*names: str, default: str | None = None) -> str | None:
 
 
 def providers() -> list[dict]:
-    """사용할 AI 순서: OpenAI 키가 있으면 OpenAI 먼저, 그다음 Hugging Face 무료 sLLM."""
+    """키가 있는 AI 서비스 목록 (OpenAI → Gemini → Groq → Hugging Face)."""
     out = []
-    key = _secret("OPENAI_API_KEY")
-    if key:
-        out.append({"name": "OpenAI", "api_key": key, "base_url": None,
-                    "model": _secret("OPENAI_MODEL", default=DEFAULT_OPENAI_MODEL)})
-    hf = _secret("HF_TOKEN", "HUGGINGFACEHUB_API_TOKEN")
-    if hf:
-        fixed = _secret("HF_MODEL")
+    for cfg in PROVIDERS:
+        key = _secret(*cfg["keys"])
+        if not key or cfg["name"] in _DISABLED:
+            continue
+        fixed = _secret(cfg["model_env"])
         if fixed:
             models = [fixed]
         else:
-            models = ([_HF_WORKING] if _HF_WORKING else []) + [m for m in HF_CANDIDATES if m != _HF_WORKING and m not in _HF_BAD]
-            models = models or [DEFAULT_HF_MODEL]
-        out.append({"name": "Hugging Face", "api_key": hf, "base_url": HF_BASE_URL,
-                    "model": models[0], "models": models})
+            w = _WORKING.get(cfg["name"])
+            models = ([w] if w else []) + [m for m in cfg["models"] if m != w and (cfg["name"], m) not in _BAD]
+            models = models or [cfg["models"][0]]
+        out.append({"name": cfg["name"], "api_key": key, "base_url": cfg["base_url"], "model": models[0], "models": models})
     return out
 
 
@@ -84,8 +93,8 @@ def provider_label() -> str:
     if not ps:
         return ""
     p = ps[0]
-    if p["name"] == "Hugging Face" and not _HF_WORKING and not _secret("HF_MODEL"):
-        return "Hugging Face · 무료 sLLM 자동 선택"
+    if p["name"] not in _WORKING and len(p["models"]) > 1:
+        return f"{p['name']} · 모델 자동 선택"
     return f"{p['name']} · {p['model'].split('/')[-1]}"
 
 
@@ -106,25 +115,27 @@ def _call(p: dict, user_prompt: str, max_tokens: int, system: str = SYSTEM_PROMP
 
 
 def _chat(user_prompt: str, max_tokens: int = 600, system: str = SYSTEM_PROMPT) -> str | None:
-    """OpenAI → Hugging Face 순서로 시도. 모두 실패하면 None (규칙 기반 문장으로 대체)."""
-    global LAST_PROVIDER, LAST_ERROR, _HF_WORKING
+    """키가 있는 AI 서비스를 순서대로 시도. 모두 실패하면 None (규칙 기반 문장으로 대체).
+    - 모델 미지원·빈 응답 → 같은 서비스의 다음 후보 모델
+    - 키 오류(401/403)·크레딧 없음(402) → 이번 실행 동안 그 서비스를 건너뜀
+    - 한도 초과(429)·네트워크 오류 → 다음 서비스로 (다음 요청에서 다시 시도)"""
+    global LAST_PROVIDER, LAST_ERROR
     for p in providers():
-        for m in p.get("models", [p["model"]]):
+        for m in p["models"]:
             try:
                 text = _call({**p, "model": m}, user_prompt, max_tokens, system=system)
                 LAST_PROVIDER = p["name"]
-                if p["name"] == "Hugging Face":
-                    _HF_WORKING = m
+                _WORKING[p["name"]] = m
                 return text
             except Exception as e:
                 LAST_ERROR = f"{p['name']}({m}): {type(e).__name__}: {str(e)[:200]}"
                 status = getattr(e, "status_code", None)
-                if status in (401, 402, 403, 429):  # 키·권한·크레딧·한도 문제 → 다른 모델도 같으니 다음 AI로
+                if status in (401, 402, 403):
+                    _DISABLED[p["name"]] = LAST_ERROR
                     break
-                if p["name"] == "Hugging Face":     # 모델 미지원·빈 응답 등 → 다음 후보 모델
-                    _HF_BAD.add(m)
-                    continue
-                break
+                if status == 429 or any(k in type(e).__name__ for k in ("Connection", "Timeout")):
+                    break
+                _BAD.add((p["name"], m))
     return None
 
 

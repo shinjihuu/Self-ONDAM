@@ -37,6 +37,8 @@ jobs:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python -m core.agents.collector --limit "${{ github.event.inputs.limit || '100' }}"
 
       - name: 테스트 (수집 결과로 앱 계산이 깨지지 않는지)
