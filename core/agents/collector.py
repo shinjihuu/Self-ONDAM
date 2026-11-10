@@ -445,6 +445,8 @@ def refine_with_llm(name: str, target_text: str, heuristic: dict) -> tuple[dict,
     from core import ai
     if not ai.ai_available() or not target_text or _LLM_FAILS >= 3:   # 3번 연속 실패하면 규칙 추출만 사용
         return heuristic, None
+    if ai.LAST_ERROR and "402" in ai.LAST_ERROR:   # 무료 크레딧 소진 → 더 호출하지 않음
+        return heuristic, None
     prompt = f"""제도명: {name}
 대상·선정기준 원문:
 {target_text[:1500]}

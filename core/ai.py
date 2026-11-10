@@ -119,7 +119,7 @@ def _chat(user_prompt: str, max_tokens: int = 600, system: str = SYSTEM_PROMPT) 
             except Exception as e:
                 LAST_ERROR = f"{p['name']}({m}): {type(e).__name__}: {str(e)[:200]}"
                 status = getattr(e, "status_code", None)
-                if status in (401, 403, 429):      # 키·권한·한도 문제 → 다른 모델도 같으니 다음 AI로
+                if status in (401, 402, 403, 429):  # 키·권한·크레딧·한도 문제 → 다른 모델도 같으니 다음 AI로
                     break
                 if p["name"] == "Hugging Face":     # 모델 미지원·빈 응답 등 → 다음 후보 모델
                     _HF_BAD.add(m)
