@@ -85,7 +85,7 @@ streamlit run app.py
 | 순서 | 조건 | 사용하는 AI |
 | --- | --- | --- |
 | 1 | `OPENAI_API_KEY`가 있으면 | OpenAI (`OPENAI_MODEL`, 기본 `gpt-4o-mini`) |
-| 2 | 없거나 실패하면 + `HF_TOKEN`이 있으면 | Hugging Face 무료 sLLM (`HF_MODEL`, 기본 `Qwen/Qwen2.5-7B-Instruct`) |
+| 2 | 없거나 실패하면 + `HF_TOKEN`이 있으면 | Hugging Face 무료 sLLM (지원되는 모델 자동 선택: Llama-3.1-8B → Qwen2.5-72B → Gemma-3-27B → gpt-oss-20b, `HF_MODEL`로 고정 가능) |
 | 3 | 둘 다 없거나 실패하면 | 규칙 기반 설명 (모든 기능 정상 작동) |
 
 - 무료 HF 토큰은 https://huggingface.co/settings/tokens 에서 발급받아요. Fine-grained 토큰을 만들 때 **Make calls to Inference Providers** 권한을 체크하세요.

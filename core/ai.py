@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 
 SYSTEM_PROMPT = """너는 '자립ON'의 AI 길잡이야. 발달장애인과 보호자가 이해하기 쉽게 설명해.
 
@@ -23,7 +24,17 @@ SYSTEM_PROMPT = """너는 '자립ON'의 AI 길잡이야. 발달장애인과 보�
 
 HF_BASE_URL = "https://router.huggingface.co/v1"   # Hugging Face Inference Providers (OpenAI 호환)
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
-DEFAULT_HF_MODEL = "Qwen/Qwen2.5-7B-Instruct"       # 한국어가 되는 무료 sLLM (7B)
+# Hugging Face 제공자가 지원하는 모델은 수시로 바뀌므로, 후보를 순서대로 시도하고 처음 성공한 모델을 계속 쓴다.
+# (HF_MODEL을 지정하면 그 모델만 사용)
+HF_CANDIDATES = [
+    "meta-llama/Llama-3.1-8B-Instruct",   # 8B sLLM
+    "Qwen/Qwen2.5-72B-Instruct",          # 한국어 품질이 좋은 대안
+    "google/gemma-3-27b-it",
+    "openai/gpt-oss-20b",
+]
+DEFAULT_HF_MODEL = HF_CANDIDATES[0]
+_HF_WORKING: str | None = None    # 이번 실행에서 성공한 모델
+_HF_BAD: set[str] = set()         # 지원되지 않는 것으로 확인된 모델
 
 LAST_PROVIDER: str | None = None   # 마지막으로 응답에 성공한 AI
 LAST_ERROR: str | None = None      # 마지막 실패 원인 (진단용, 키는 포함하지 않음)
@@ -52,8 +63,14 @@ def providers() -> list[dict]:
                     "model": _secret("OPENAI_MODEL", default=DEFAULT_OPENAI_MODEL)})
     hf = _secret("HF_TOKEN", "HUGGINGFACEHUB_API_TOKEN")
     if hf:
+        fixed = _secret("HF_MODEL")
+        if fixed:
+            models = [fixed]
+        else:
+            models = ([_HF_WORKING] if _HF_WORKING else []) + [m for m in HF_CANDIDATES if m != _HF_WORKING and m not in _HF_BAD]
+            models = models or [DEFAULT_HF_MODEL]
         out.append({"name": "Hugging Face", "api_key": hf, "base_url": HF_BASE_URL,
-                    "model": _secret("HF_MODEL", default=DEFAULT_HF_MODEL)})
+                    "model": models[0], "models": models})
     return out
 
 
@@ -67,6 +84,8 @@ def provider_label() -> str:
     if not ps:
         return ""
     p = ps[0]
+    if p["name"] == "Hugging Face" and not _HF_WORKING and not _secret("HF_MODEL"):
+        return "Hugging Face · 무료 sLLM 자동 선택"
     return f"{p['name']} · {p['model'].split('/')[-1]}"
 
 
@@ -80,7 +99,7 @@ def _call(p: dict, user_prompt: str, max_tokens: int, system: str = SYSTEM_PROMP
         temperature=0.2,
         max_tokens=max_tokens,
     )
-    text = (resp.choices[0].message.content or "").strip()
+    text = re.sub(r"<think>.*?</think>", "", resp.choices[0].message.content or "", flags=re.S).strip()
     if not text:
         raise ValueError("빈 응답")
     return text
@@ -88,16 +107,24 @@ def _call(p: dict, user_prompt: str, max_tokens: int, system: str = SYSTEM_PROMP
 
 def _chat(user_prompt: str, max_tokens: int = 600, system: str = SYSTEM_PROMPT) -> str | None:
     """OpenAI → Hugging Face 순서로 시도. 모두 실패하면 None (규칙 기반 문장으로 대체)."""
-    global LAST_PROVIDER
+    global LAST_PROVIDER, LAST_ERROR, _HF_WORKING
     for p in providers():
-        try:
-            text = _call(p, user_prompt, max_tokens, system=system)
-            LAST_PROVIDER = p["name"]
-            return text
-        except Exception as e:  # 키 오류·한도 초과·네트워크 오류 → 다음 AI로
-            global LAST_ERROR
-            LAST_ERROR = f"{p['name']}({p['model']}): {type(e).__name__}: {str(e)[:200]}"
-            continue
+        for m in p.get("models", [p["model"]]):
+            try:
+                text = _call({**p, "model": m}, user_prompt, max_tokens, system=system)
+                LAST_PROVIDER = p["name"]
+                if p["name"] == "Hugging Face":
+                    _HF_WORKING = m
+                return text
+            except Exception as e:
+                LAST_ERROR = f"{p['name']}({m}): {type(e).__name__}: {str(e)[:200]}"
+                status = getattr(e, "status_code", None)
+                if status in (401, 403, 429):      # 키·권한·한도 문제 → 다른 모델도 같으니 다음 AI로
+                    break
+                if p["name"] == "Hugging Face":     # 모델 미지원·빈 응답 등 → 다음 후보 모델
+                    _HF_BAD.add(m)
+                    continue
+                break
     return None
 
 

@@ -160,3 +160,46 @@ def test_rule_fallback_when_all_fail(monkeypatch):
     progs = json.loads((DATA / "programs.json").read_text(encoding="utf-8"))["programs"]
     text, by = ai.answer_question("장애인연금 신청은 어디서 해요?", {}, progs)
     assert by is False and "장애인연금" in text
+
+
+
+def test_hf_model_fallback(monkeypatch):
+    """지원되지 않는 HF 모델은 건너뛰고 다음 후보로, 성공한 모델은 기억한다."""
+    _clear_env(monkeypatch)
+    monkeypatch.setenv("HF_TOKEN", "hf_x")
+    monkeypatch.setattr(ai, "_HF_WORKING", None)
+    monkeypatch.setattr(ai, "_HF_BAD", set())
+    tried = []
+
+    class NotSupported(Exception):
+        status_code = 400
+
+    def fake_call(p, prompt, max_tokens, **kw):
+        tried.append(p["model"])
+        if p["model"] == ai.HF_CANDIDATES[0]:
+            raise NotSupported("model is not supported by any provider you have enabled")
+        return "답변"
+    monkeypatch.setattr(ai, "_call", fake_call)
+    assert ai._chat("q") == "답변"
+    assert tried == ai.HF_CANDIDATES[:2]
+    assert ai.providers()[0]["models"][0] == ai.HF_CANDIDATES[1]     # 성공한 모델이 맨 앞
+    assert ai.HF_CANDIDATES[0] not in ai.providers()[0]["models"]
+
+
+def test_hf_auth_error_stops_trying_models(monkeypatch):
+    _clear_env(monkeypatch)
+    monkeypatch.setenv("HF_TOKEN", "hf_x")
+    monkeypatch.setattr(ai, "_HF_WORKING", None)
+    monkeypatch.setattr(ai, "_HF_BAD", set())
+    tried = []
+
+    class Auth(Exception):
+        status_code = 401
+
+    def fake_call(p, *a, **k):
+        tried.append(p["model"])
+        raise Auth("invalid token")
+    monkeypatch.setattr(ai, "_call", fake_call)
+    assert ai._chat("q") is None
+    assert tried == [ai.HF_CANDIDATES[0]]          # 키 문제는 다른 모델로 바꿔도 같으니 바로 중단
+    assert "invalid token" in ai.LAST_ERROR
