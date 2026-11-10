@@ -33,8 +33,8 @@ PROVIDERS = [
     {"name": "Gemini", "keys": ("GEMINI_API_KEY", "GOOGLE_API_KEY"),
      "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/", "model_env": "GEMINI_MODEL",
      # 2026-11 점검: 키에 열린 모델 목록 기준 (2.5/2.0 flash는 404)
-     "models": ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-flash-latest",
-                "gemini-3.1-flash-lite", "gemma-4-26b-a4b-it"]},
+     # 3.5-flash·gemma-4는 짧은 토큰 한도에서 생각 과정이 섞여 나와 제외
+     "models": ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-flash-latest"]},
     {"name": "Groq", "keys": ("GROQ_API_KEY",), "base_url": "https://api.groq.com/openai/v1", "model_env": "GROQ_MODEL",
      "models": ["openai/gpt-oss-20b", "llama-3.1-8b-instant", "llama-3.3-70b-versatile"]},
     {"name": "Hugging Face", "keys": ("HF_TOKEN", "HUGGINGFACEHUB_API_TOKEN"),
@@ -110,7 +110,9 @@ def _call(p: dict, user_prompt: str, max_tokens: int, system: str = SYSTEM_PROMP
         temperature=0.2,
         max_tokens=max_tokens,
     )
-    text = re.sub(r"<think>.*?</think>", "", resp.choices[0].message.content or "", flags=re.S).strip()
+    text = re.sub(r"<(think|thought)>.*?</\1>", "", resp.choices[0].message.content or "", flags=re.S).strip()
+    if text.startswith(("<think", "<thought")):     # 생각 과정만 나오고 끝난 경우
+        raise ValueError("생각 과정만 출력됨")
     if not text:
         raise ValueError("빈 응답")
     return text

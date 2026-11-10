@@ -82,8 +82,26 @@ def check_other_services() -> None:
                 print(f"❌ {m}: {type(e).__name__}: {str(e)[:200]}")
 
 
+def check_app_explanation() -> None:
+    """앱과 똑같이 ‘김OO 님 · 장애인연금’ 추천 설명을 생성해 본다."""
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+    from core import ai
+    from core.agents.recommender import RecommenderAgent
+    if not ai.ai_available():
+        return
+    agent, _ = RecommenderAgent.from_files(include_collected=False)
+    root = os.path.join(os.path.dirname(__file__), "..")
+    profile = json.load(open(os.path.join(root, "data", "personas.json"), encoding="utf-8"))["personas"][0]["profile"]
+    rec = next(r for r in agent.recommend(profile) if r.program_id == "day_activity")
+    text, by = agent.explain(profile, rec)
+    print(f"\n== 앱 추천 설명 예시 (주간활동서비스) · 응답: {by or '규칙 기반'} ==\n{text}")
+    if not by:
+        print(f"마지막 오류: {ai.LAST_ERROR}")
+
+
 def main() -> int:
     check_other_services()
+    check_app_explanation()
     if not TOKEN:
         print("\nHF_TOKEN이 비어 있어 Hugging Face 점검은 건너뛰어요.")
         return 0
