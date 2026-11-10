@@ -23,6 +23,7 @@ import os
 import re
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -59,17 +60,63 @@ def _service_key() -> str | None:
     return key
 
 
+HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; JaripON-collector/1.0)", "Accept": "application/xml, text/xml, */*"}
+
+# 공공데이터포털 오류 코드 → 쉬운 원인 설명
+API_ERROR_HINTS = {
+    "SERVICE_KEY_IS_NOT_REGISTERED": "인증키가 등록되지 않았어요. 활용신청 승인 후 키가 동기화되기까지 1~2시간 걸릴 수 있어요. "
+                                     "‘일반 인증키(Decoding)’를 넣었는지도 확인하세요.",
+    "Unauthorized": "인증키가 없거나 잘못됐어요. 이 API(중앙부처복지서비스)에 활용신청이 승인됐는지 마이페이지에서 확인하세요.",
+    "BLACKLIST_IP": "호출한 서버 IP가 차단됐어요. 해외 IP(GitHub 서버)가 막힌 경우라 국내에서 실행해야 해요.",
+    "LIMITED_NUMBER_OF_SERVICE_REQUESTS": "일일 호출 한도를 넘었어요. 내일 다시 실행하거나 --limit 값을 줄이세요.",
+    "SERVICE_ACCESS_DENIED": "이 API에 대한 접근 권한이 없어요. 활용신청 상태를 확인하세요.",
+    "NO_OPENAPI_SERVICE": "API 주소가 바뀌었어요. 공공데이터포털 명세의 요청주소로 WELFARE_API_BASE를 바꿔 주세요.",
+}
+
+
+class ApiError(RuntimeError):
+    pass
+
+
+def _diagnose(status: int | None, body: str) -> str:
+    for code, hint in API_ERROR_HINTS.items():
+        if code in body:
+            return f"{code} — {hint}"
+    if status == 403:
+        return ("HTTP 403 (접근 거부). 흔한 원인: ① 활용신청 미승인·키 동기화 대기(승인 후 1~2시간) "
+                "② 해외 IP 차단(GitHub 서버는 미국 IP) ③ 디코딩/인코딩 키 혼동")
+    if status == 404:
+        return "HTTP 404 — API 주소가 바뀌었을 수 있어요. 공공데이터포털 명세의 요청주소를 확인하세요."
+    return f"HTTP {status}"
+
+
 def _get(url: str, params: dict, retries: int = 2) -> str:
+    """API 호출. 4xx는 원인을 진단해 바로 알리고, 5xx·네트워크 오류만 재시도. https 실패 시 http로 한 번 더 시도."""
     q = urllib.parse.urlencode(params)
+    key = str(params.get("serviceKey", ""))
+    mask = lambda s: s.replace(key, "***").replace(urllib.parse.quote(key, safe=""), "***") if key else s
     last = None
-    for i in range(retries + 1):
-        try:
-            with urllib.request.urlopen(f"{url}?{q}", timeout=20) as r:
-                return r.read().decode("utf-8")
-        except Exception as e:  # 네트워크 일시 오류 → 재시도
-            last = e
+    for base in (url, url.replace("https://", "http://", 1)):
+        for i in range(retries + 1):
+            try:
+                req = urllib.request.Request(f"{base}?{q}", headers=HEADERS)
+                with urllib.request.urlopen(req, timeout=25) as r:
+                    text = r.read().decode("utf-8", errors="replace")
+                for code, hint in API_ERROR_HINTS.items():   # 200 응답 안에 오류가 담겨 오는 경우
+                    if code in text and "<servList>" not in text and "<servId>" not in text:
+                        raise ApiError(f"{code} — {hint}\n응답 일부: {mask(text[:300])}")
+                return text
+            except ApiError:
+                raise
+            except urllib.error.HTTPError as e:
+                body = e.read().decode("utf-8", errors="replace")[:400]
+                last = ApiError(f"{_diagnose(e.code, body)}\n요청: {mask(base)}\n응답 일부: {mask(body) or '(본문 없음)'}")
+                if e.code < 500:
+                    break            # 4xx는 재시도해도 같으니 다음 주소(http)로
+            except Exception as e:  # 네트워크 일시 오류 → 재시도
+                last = ApiError(f"네트워크 오류: {e}")
             time.sleep(1.5 * (i + 1))
-    raise RuntimeError(f"API 호출 실패: {last}")
+    raise last or ApiError("API 호출 실패")
 
 
 def _elem_to_dict(el: ET.Element) -> dict:
@@ -360,7 +407,11 @@ def main(argv=None) -> int:
     ap.add_argument("--no-llm", action="store_true", help="AI 다듬기 생략")
     ap.add_argument("--out", type=Path, default=OUTPUT_PATH)
     a = ap.parse_args(argv)
-    items, details = fetch_from_dir(a.from_dir) if a.from_dir else fetch_from_api(a.query, a.limit)
+    try:
+        items, details = fetch_from_dir(a.from_dir) if a.from_dir else fetch_from_api(a.query, a.limit)
+    except ApiError as e:
+        print(f"[수집 에이전트] ❌ 공공데이터 API 호출 실패 — 기존 데이터는 그대로 둡니다.\n{e}", file=sys.stderr)
+        return 1
     result = collect(items, details, use_llm=not a.no_llm)
     a.out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     m = result["meta"]

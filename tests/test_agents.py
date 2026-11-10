@@ -87,3 +87,39 @@ def test_recommender_answer_uses_relevant_programs(monkeypatch):
     monkeypatch.setattr(ai, "answer_question", lambda q, p, progs: (seen.setdefault("n", [x["id"] for x in progs]), False))
     agent.answer("장애인연금 신청", DAUGHTER, top_k=3)
     assert seen["n"][0] == "disability_pension" and len(seen["n"]) == 3
+
+
+def test_api_403_is_diagnosed_and_key_masked(monkeypatch):
+    import io
+    import urllib.error
+    import pytest
+
+    def fake(req, timeout=0):
+        raise urllib.error.HTTPError(req.full_url, 403, "Forbidden", {}, io.BytesIO(b"Forbidden"))
+    monkeypatch.setattr(col.urllib.request, "urlopen", fake)
+    monkeypatch.setattr(col.time, "sleep", lambda s: None)
+    with pytest.raises(col.ApiError) as e:
+        col._get("https://apis.data.go.kr/x", {"serviceKey": "SECRET123"})
+    assert "403" in str(e.value) and "SECRET123" not in str(e.value)
+
+
+def test_api_error_inside_200_response(monkeypatch):
+    import io
+    import pytest
+
+    class R(io.BytesIO):
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+    body = b"<OpenAPI_ServiceResponse><returnAuthMsg>SERVICE_KEY_IS_NOT_REGISTERED_ERROR</returnAuthMsg></OpenAPI_ServiceResponse>"
+    monkeypatch.setattr(col.urllib.request, "urlopen", lambda req, timeout=0: R(body))
+    with pytest.raises(col.ApiError) as e:
+        col._get("https://apis.data.go.kr/x", {"serviceKey": "k"})
+    assert "동기화" in str(e.value)
+
+
+def test_main_keeps_existing_file_on_api_failure(monkeypatch, tmp_path):
+    out = tmp_path / "c.json"
+    out.write_text("기존", encoding="utf-8")
+    monkeypatch.setattr(col, "fetch_from_api", lambda q, l: (_ for _ in ()).throw(col.ApiError("403")))
+    assert col.main(["--out", str(out)]) == 1
+    assert out.read_text(encoding="utf-8") == "기존"

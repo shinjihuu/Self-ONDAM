@@ -16,11 +16,20 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt pytest
+
+      - name: 실행 환경 점검 (인증키 · 서버 IP)
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: |
+          if [ -z "$DATA_GO_KR_KEY" ]; then echo "::error::DATA_GO_KR_KEY 시크릿이 비어 있어요"; exit 1; fi
+          echo "인증키 길이: ${#DATA_GO_KR_KEY}자 (Decoding 키는 보통 %, + 없이 끝이 == 로 끝나요)"
+          case "$DATA_GO_KR_KEY" in *%*) echo "::warning::키에 %가 있어요. 인코딩 키 대신 Decoding 키를 넣어 주세요";; esac
+          echo "GitHub 서버 IP 위치: $(curl -s --max-time 10 https://ipinfo.io/country || echo 확인 불가)"
 
       - name: 수집 에이전트 실행
         env:
