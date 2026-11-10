@@ -114,3 +114,49 @@ def test_profile_totals_consistent():
         p = pr["profile"]
         assert p["monthly_income"] == sum(i["amount"] for i in p["income_items"])
         assert p["monthly_expense"] == sum(i["amount"] for i in p["expense_items"])
+
+
+# ── AI 공급자 순서: OpenAI → Hugging Face → 규칙 기반 ──
+from core import ai
+
+
+def _clear_env(monkeypatch):
+    for k in ("OPENAI_API_KEY", "OPENAI_MODEL", "HF_TOKEN", "HUGGINGFACEHUB_API_TOKEN", "HF_MODEL"):
+        monkeypatch.delenv(k, raising=False)
+
+
+def test_provider_order(monkeypatch):
+    _clear_env(monkeypatch)
+    assert ai.providers() == [] and not ai.ai_available()
+    monkeypatch.setenv("HF_TOKEN", "hf_x")
+    ps = ai.providers()
+    assert [p["name"] for p in ps] == ["Hugging Face"]
+    assert ps[0]["base_url"] == ai.HF_BASE_URL and ps[0]["model"] == ai.DEFAULT_HF_MODEL
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-x")
+    assert [p["name"] for p in ai.providers()] == ["OpenAI", "Hugging Face"]
+
+
+def test_fallback_to_hf_when_openai_fails(monkeypatch):
+    _clear_env(monkeypatch)
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-x")
+    monkeypatch.setenv("HF_TOKEN", "hf_x")
+    calls = []
+
+    def fake_call(p, prompt, max_tokens):
+        calls.append(p["name"])
+        if p["name"] == "OpenAI":
+            raise RuntimeError("quota")
+        return "허깅페이스 답변이에요."
+    monkeypatch.setattr(ai, "_call", fake_call)
+    text, by = ai.answer_question("장애인연금은?", {}, [])
+    assert calls == ["OpenAI", "Hugging Face"]
+    assert text == "허깅페이스 답변이에요." and by == "Hugging Face"
+
+
+def test_rule_fallback_when_all_fail(monkeypatch):
+    _clear_env(monkeypatch)
+    monkeypatch.setenv("HF_TOKEN", "hf_x")
+    monkeypatch.setattr(ai, "_call", lambda *a: (_ for _ in ()).throw(RuntimeError("down")))
+    progs = json.loads((DATA / "programs.json").read_text(encoding="utf-8"))["programs"]
+    text, by = ai.answer_question("장애인연금 신청은 어디서 해요?", {}, progs)
+    assert by is False and "장애인연금" in text

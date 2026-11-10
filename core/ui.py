@@ -210,9 +210,13 @@ def note(text: str, tone: str = "warm") -> None:
     st.markdown(f'<div class="note {tone}">{text}</div>', unsafe_allow_html=True)
 
 
-def ai_box(text: str, by_ai: bool) -> None:
+def ai_box(text: str, by_ai) -> None:
+    """by_ai: 응답한 AI 이름(str) 또는 False(규칙 기반)."""
     import re
-    who = "🤖 AI 길잡이" if by_ai else "🌱 자립ON 길잡이 (규칙 기반 설명)"
+    if by_ai:
+        who = "🤖 AI 길잡이" + (f" · {esc(by_ai)}" if isinstance(by_ai, str) else "")
+    else:
+        who = "🌱 자립ON 길잡이 (규칙 기반 설명)"
     body = esc(text).replace("\n", "<br>")
     body = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", body)
     st.markdown(f'<div class="ai-box"><div class="who">{who}</div>{body}</div>', unsafe_allow_html=True)

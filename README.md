@@ -38,8 +38,17 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-AI 설명을 켜려면 `.streamlit/secrets.toml.example` 파일을 `secrets.toml`로 복사하고 `OPENAI_API_KEY`를 넣으세요.
-키가 없어도 규칙 기반 설명으로 모든 기능이 작동합니다.
+### AI 연결 (자동 선택)
+
+| 순서 | 조건 | 사용하는 AI |
+| --- | --- | --- |
+| 1 | `OPENAI_API_KEY`가 있으면 | OpenAI (`OPENAI_MODEL`, 기본 `gpt-4o-mini`) |
+| 2 | 없거나 실패하면 + `HF_TOKEN`이 있으면 | Hugging Face 무료 sLLM (`HF_MODEL`, 기본 `Qwen/Qwen2.5-7B-Instruct`) |
+| 3 | 둘 다 없거나 실패하면 | 규칙 기반 설명 (모든 기능 정상 작동) |
+
+- 무료 HF 토큰은 https://huggingface.co/settings/tokens 에서 발급받아요. Fine-grained 토큰을 만들 때 **Make calls to Inference Providers** 권한을 체크하세요.
+- Hugging Face 무료 계정은 매달 제공되는 무료 사용량 안에서 쓸 수 있어요. 다 쓰면 자동으로 규칙 기반 설명으로 바뀌어요.
+- 로컬에서는 `.streamlit/secrets.toml.example`을 `secrets.toml`로 복사해서 쓰고, Streamlit Cloud에서는 Settings → Secrets에 넣어요.
 
 테스트 (보고서의 재무비율 12개, 기획서 예시 +420만 원, 적금 이자, 추천 규칙 검증):
 
@@ -49,7 +58,7 @@ python -m pytest -q
 
 ## 배포 (Streamlit Community Cloud)
 
-GitHub에 올린 뒤 share.streamlit.io에서 `app.py`를 지정하고, Settings → Secrets에 `OPENAI_API_KEY`를 입력합니다.
+GitHub에 올린 뒤 share.streamlit.io에서 `app.py`를 지정하고, Settings → Secrets에 `OPENAI_API_KEY` 또는 `HF_TOKEN`을 입력합니다.
 
 ## 구조
 
@@ -58,7 +67,7 @@ app.py                 화면 3개 · 라우팅
 core/finance.py        현금흐름 · 예금 · 적금 · 목표 계산
 core/eligibility.py    지원제도 규칙 판정 · 중복 경고
 core/household.py      가족 재무비율 (AFPK 3단계)
-core/ai.py             OpenAI 설명 · Q&A (키가 없을 때 대체 문장)
+core/ai.py             AI 설명 · Q&A (OpenAI → Hugging Face → 규칙 기반)
 core/ui.py             파스텔 테마 CSS · 컴포넌트
 data/programs.json     지원제도 5개 (공식 출처 링크)
 data/personas.json     공모전 사례 · 예시 사용자

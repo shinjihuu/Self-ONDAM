@@ -1,4 +1,4 @@
-"""AI 설명 모듈 — OpenAI API 사용, 키가 없으면 규칙 기반 문장으로 대체.
+"""AI 설명 모듈 — OpenAI 키가 있으면 OpenAI, 없으면 Hugging Face 무료 sLLM, 둘 다 없으면 규칙 기반 문장.
 
 AI 역할: 추천 이유·유의사항 설명, 공식 자료 기반 질의응답, 시뮬레이션 결과를 쉬운 말로 풀어주기.
 AI가 하지 않는 일: 자격 판정, 금액 계산, 수급 확정 (모두 Python 규칙/계산이 담당).
@@ -17,52 +17,85 @@ SYSTEM_PROMPT = """너는 '자립ON'의 AI 길잡이야. 발달장애인과 보�
 4. 돌봄·활동지원·근로지원인 같은 서비스를 현금 수입처럼 말하지 마.
 5. 예금·적금에 넣은 돈은 '돈의 이동'이고, 새로 늘어나는 돈은 이자뿐이라는 점을 헷갈리지 않게 말해.
 6. 숫자는 '만 원' 단위로 말해.
+7. 반드시 한국어로만 답해. 한자·영어 문장을 섞지 마.
 """
 
 
-def _get_key() -> str | None:
-    try:
-        import streamlit as st
-        if "OPENAI_API_KEY" in st.secrets:
-            return st.secrets["OPENAI_API_KEY"]
-    except Exception:
-        pass
-    return os.environ.get("OPENAI_API_KEY")
+HF_BASE_URL = "https://router.huggingface.co/v1"   # Hugging Face Inference Providers (OpenAI 호환)
+DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
+DEFAULT_HF_MODEL = "Qwen/Qwen2.5-7B-Instruct"       # 한국어가 되는 무료 sLLM (7B)
+
+LAST_PROVIDER: str | None = None   # 마지막으로 응답에 성공한 AI
 
 
-def _get_model() -> str:
-    try:
-        import streamlit as st
-        if "OPENAI_MODEL" in st.secrets:
-            return st.secrets["OPENAI_MODEL"]
-    except Exception:
-        pass
-    return os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+def _secret(*names: str, default: str | None = None) -> str | None:
+    """st.secrets → 환경변수 순으로 첫 번째 값을 찾는다."""
+    for n in names:
+        try:
+            import streamlit as st
+            if n in st.secrets and st.secrets[n]:
+                return str(st.secrets[n])
+        except Exception:
+            pass
+        if os.environ.get(n):
+            return os.environ[n]
+    return default
+
+
+def providers() -> list[dict]:
+    """사용할 AI 순서: OpenAI 키가 있으면 OpenAI 먼저, 그다음 Hugging Face 무료 sLLM."""
+    out = []
+    key = _secret("OPENAI_API_KEY")
+    if key:
+        out.append({"name": "OpenAI", "api_key": key, "base_url": None,
+                    "model": _secret("OPENAI_MODEL", default=DEFAULT_OPENAI_MODEL)})
+    hf = _secret("HF_TOKEN", "HUGGINGFACEHUB_API_TOKEN")
+    if hf:
+        out.append({"name": "Hugging Face", "api_key": hf, "base_url": HF_BASE_URL,
+                    "model": _secret("HF_MODEL", default=DEFAULT_HF_MODEL)})
+    return out
 
 
 def ai_available() -> bool:
-    return bool(_get_key())
+    return bool(providers())
+
+
+def provider_label() -> str:
+    """사이드바 표시용: 지금 우선 사용할 AI."""
+    ps = providers()
+    if not ps:
+        return ""
+    p = ps[0]
+    return f"{p['name']} · {p['model'].split('/')[-1]}"
+
+
+def _call(p: dict, user_prompt: str, max_tokens: int) -> str:
+    from openai import OpenAI
+    client = OpenAI(api_key=p["api_key"], base_url=p["base_url"], timeout=40, max_retries=1)
+    resp = client.chat.completions.create(
+        model=p["model"],
+        messages=[{"role": "system", "content": SYSTEM_PROMPT},
+                  {"role": "user", "content": user_prompt}],
+        temperature=0.3,
+        max_tokens=max_tokens,
+    )
+    text = (resp.choices[0].message.content or "").strip()
+    if not text:
+        raise ValueError("빈 응답")
+    return text
 
 
 def _chat(user_prompt: str, max_tokens: int = 600) -> str | None:
-    key = _get_key()
-    if not key:
-        return None
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=key)
-        resp = client.chat.completions.create(
-            model=_get_model(),
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.3,
-            max_tokens=max_tokens,
-        )
-        return resp.choices[0].message.content.strip()
-    except Exception as e:  # 네트워크·키 오류 시 규칙 기반 문장으로 대체
-        return f"__ERROR__{e}"
+    """OpenAI → Hugging Face 순서로 시도. 모두 실패하면 None (규칙 기반 문장으로 대체)."""
+    global LAST_PROVIDER
+    for p in providers():
+        try:
+            text = _call(p, user_prompt, max_tokens)
+            LAST_PROVIDER = p["name"]
+            return text
+        except Exception:  # 키 오류·한도 초과·네트워크 오류 → 다음 AI로
+            continue
+    return None
 
 
 def _profile_brief(p: dict) -> str:
@@ -81,8 +114,8 @@ def explain_recommendation(profile: dict, program: dict, rec) -> tuple[str, bool
 이 사람에게 '{program['name']}'을(를) 왜 살펴보면 좋은지(또는 왜 지금은 맞지 않는지) 3~4문장으로 쉽게 설명해 줘.
 마지막 문장은 다음에 할 일 한 가지로 끝내."""
     out = _chat(prompt, 350)
-    if out and not out.startswith("__ERROR__"):
-        return out, True
+    if out:
+        return out, LAST_PROVIDER or "AI"
     return _fallback_recommendation(profile, program, rec), False
 
 
@@ -120,8 +153,8 @@ def explain_simulation(summary: dict) -> tuple[str, bool]:
 - 저축하면 목표에 얼마나 가까워지는지
 - '가정'에 기반한 결과라는 점과 확인할 점 1가지"""
     out = _chat(prompt, 450)
-    if out and not out.startswith("__ERROR__"):
-        return out, True
+    if out:
+        return out, LAST_PROVIDER or "AI"
     return _fallback_simulation(summary), False
 
 
@@ -154,8 +187,8 @@ def answer_question(question: str, profile: dict, programs: list[dict]) -> tuple
 
 공식 자료 안에서만 답해 줘. 자료에 없으면 어디에 문의하면 되는지(연락처) 알려 줘. 5문장 이내."""
     out = _chat(prompt, 450)
-    if out and not out.startswith("__ERROR__"):
-        return out, True
+    if out:
+        return out, LAST_PROVIDER or "AI"
     return _fallback_answer(question, programs), False
 
 

@@ -88,10 +88,12 @@ with st.sidebar:
     st.divider()
     st.toggle("🔍 큰 글씨로 보기", key="large_text")
     if ai.ai_available():
-        st.markdown(ui.badge("AI 연결됨", "ok"), unsafe_allow_html=True)
+        st.markdown(ui.badge("AI 연결됨 · " + ai.provider_label(), "ok"), unsafe_allow_html=True)
+        if len(ai.providers()) > 1:
+            st.caption("OpenAI가 응답하지 않으면 Hugging Face 무료 sLLM으로 자동 전환돼요.")
     else:
-        st.markdown(ui.badge("AI 키 없음 · 규칙 기반 설명", "more"), unsafe_allow_html=True)
-        st.caption("`.streamlit/secrets.toml`에 `OPENAI_API_KEY`를 넣으면 AI 설명이 켜져요.")
+        st.markdown(ui.badge("AI 미연결 · 규칙 기반 설명", "more"), unsafe_allow_html=True)
+        st.caption("Secrets에 `OPENAI_API_KEY`(유료) 또는 `HF_TOKEN`(무료)을 넣으면 AI 설명이 켜져요.")
     st.divider()
     st.caption("ⓘ 이 서비스는 지원제도 **확인 우선순위**를 안내할 뿐, 수급 여부를 확정하지 않아요. "
                "주민등록번호·계좌번호 등 민감정보는 입력받지 않아요.")
@@ -393,7 +395,7 @@ def page_support() -> None:
         with st.chat_message("assistant", avatar="🌱"):
             st.markdown(a)
             if not by_ai:
-                st.caption("규칙 기반 답변 (AI 키 연결 시 더 자세히 답해요)")
+                st.caption("규칙 기반 답변 (AI 연결 시 더 자세히 답해요)")
     ex = ["장애인연금은 취업하면 어떻게 돼요?", "주간활동서비스 신청은 어디서 해요?", "근로지원인은 언제 신청할 수 있어요?"]
     ec = st.columns(3)
     preset = None
