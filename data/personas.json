@@ -1,0 +1,135 @@
+{
+  "personas": [
+    {
+      "id": "afpk_daughter",
+      "label": "🌷 AFPK 사례 · 김OO 님 (딸, 만 24세)",
+      "description": "공무원 아버지 · 전업주부 어머니 · 지적장애인 딸 가족 (인천, 2026.10.31 기준 가상 고객)",
+      "profile": {
+        "name": "김OO",
+        "age": 24,
+        "region": "인천광역시",
+        "disability_type": "지적장애",
+        "registered": true,
+        "severity": "심한 장애",
+        "employment": "구직 중 (취업 준비)",
+        "care_need": "일부 필요",
+        "using_programs": ["disability_pension", "activity_support"],
+        "job_goal": "요양보호사 자격 취득 후 취업",
+        "income_items": [
+          {"name": "장애인연금 (수급 중)", "amount": 379000, "source": "현금흐름표 연 455만 원 ÷ 12"}
+        ],
+        "expense_items": [
+          {"name": "장애인활동지원 본인부담금", "amount": 124000, "source": "현금흐름표 연 149만 원 ÷ 12"},
+          {"name": "직업훈련비 (요양보호사 교육)", "amount": 150000, "source": "현금흐름표 연 180만 원 ÷ 12", "ends_on_job": true},
+          {"name": "개인 용돈·통신비 등", "amount": 100000, "source": "데모 가정값"}
+        ],
+        "monthly_income": 379000,
+        "monthly_expense": 374000,
+        "savings": 0,
+        "family_monthly_saving": 200000,
+        "goal_year": 2037,
+        "goal_amount": 30000000,
+        "monthly_saving_wish": 300000,
+        "parent_living_support": 700000,
+        "parent_support_years": 10
+      },
+      "sim_defaults": {
+        "job_start_year": 2027,
+        "job_start_month": 9,
+        "expected_salary": 1200000,
+        "job_extra_expense": 150000,
+        "independent_living_cost": 1500000
+      },
+      "household": {
+        "base_date": "2026-10-31",
+        "members": [
+          {"rel": "어머니(고객)", "age": 53, "job": "전업주부", "note": "돌봄 피로·허리 통증, 시간제 근로 희망"},
+          {"rel": "아버지", "age": 55, "job": "지방 일반행정직 공무원", "note": "2031년 6월 퇴직, 2035년 연금 수급 예정"},
+          {"rel": "딸", "age": 24, "job": "미취업", "note": "지적장애(심한 장애), 요양보호사 취업 준비, 2037년 자립 목표"}
+        ],
+        "assets": {
+          "cash": {"보통예금": 2000},
+          "savings": {"정기적금": 2800, "정기예금": 3200},
+          "use": {"거주아파트": 45000, "자동차": 2000}
+        },
+        "debts": {"주택담보대출": 8000, "자동차 할부금": 800},
+        "income": {"김OO님 급여 (아버지)": 5788, "장애인연금 (딸)": 455},
+        "fixed": {
+          "공무원연금 기여금": 521, "건강보험료·장기요양보험료": 235, "소득세·지방소득세": 303,
+          "장애인활동지원 본인부담금": 149, "주택담보대출 원리금": 559, "자동차 할부금 원리금": 420,
+          "종신보험료": 180, "실손의료보험료": 96, "기타 보장성 보험료": 120, "자동차보험료": 96,
+          "자동차세·재산세": 70, "아파트 관리비·공과금": 326, "통신비": 156
+        },
+        "variable": {
+          "식비·외식비": 1090, "교통·차량유지비": 300, "의료비": 242, "자녀 직업훈련비": 180,
+          "주거 유지·보수비": 120, "기타 생활비": 200
+        },
+        "saving_flows": {"정기적금": 400, "자녀 자립자금 적립": 240, "비상 예비자금 적립": 240},
+        "non_consumption_keys": ["공무원연금 기여금", "건강보험료·장기요양보험료", "소득세·지방소득세", "자동차세·재산세"],
+        "loan_repayment_keys": ["주택담보대출 원리금", "자동차 할부금 원리금"],
+        "loan_interest_assumed": 436.02,
+        "insurance_keys": ["종신보험료", "실손의료보험료", "기타 보장성 보험료", "자동차보험료"],
+        "goals": [
+          {"rank": "1순위", "term": "장기", "goal": "자녀 자립지원자금 마련", "when": "2037년",
+           "detail": "초기자금 3,000만 원 + 2037~2046년 월 70만 원 생활지원자금 8,400만 원"},
+          {"rank": "2순위", "term": "중기", "goal": "은퇴생활자금 확보", "when": "2031년",
+           "detail": "연금 수급 전 48개월, 월 250만 원씩 1억 2,000만 원"},
+          {"rank": "3순위", "term": "중기", "goal": "주택담보대출 상환", "when": "2031년",
+           "detail": "정년퇴직 전 대출 잔액 8,000만 원 상환"},
+          {"rank": "4순위", "term": "단기", "goal": "보험 점검 및 관리", "when": "2027년",
+           "detail": "월 41만 원 보험료 적정성·보장 공백·중복 점검"}
+        ],
+        "timeline": [
+          {"year": "2026", "title": "재무설계 시작", "desc": "딸 요양보호사 교육·자격 준비"},
+          {"year": "2027", "title": "딸 취업 (가정)", "desc": "보험 점검 · 고용공단 취업지원 연계"},
+          {"year": "2031", "title": "아버지 퇴직", "desc": "6월 정년퇴직 · 대출 상환 목표"},
+          {"year": "2035", "title": "공무원연금 개시", "desc": "48개월 소득 공백 종료"},
+          {"year": "2037", "title": "딸 자립", "desc": "초기자금 3,000만 원 · 생활지원 시작"},
+          {"year": "2046", "title": "생활지원 종료", "desc": "월 70만 원 × 10년 완료"}
+        ],
+        "swot": {
+          "S": ["순자산 4억 6,200만 원 보유", "총자산 대비 낮은 부채비율(16.0%)", "꾸준한 저축 습관", "2035년 이후 공무원연금 수급 예정"],
+          "W": ["남편 근로소득 의존도 92.7%", "거주주택 집중 자산구조 81.8%", "금융자산 비중 14.5%", "은퇴자금·자립자금 동시 확보 부담"],
+          "O": ["어머니 시간제 근로 가능성", "딸의 직업훈련·취업을 통한 근로소득", "장애인 직업능력평가·취업지원제도", "지역사회 돌봄·자립지원 서비스 연계"],
+          "T": ["2031~2035년 연금 수급 전 소득 공백", "딸의 취업 유지 불확실성", "부모 건강 악화 시 의료·돌봄비 증가", "물가상승에 따른 생활비 증가"]
+        }
+      }
+    },
+    {
+      "id": "example_worker",
+      "label": "☕ 예시 · 근로 중인 청년 (월 소득 120만 원)",
+      "description": "기획서 예시 (월 소득 120만 원 · 월 지출 100만 원, 지원 미이용)",
+      "profile": {
+        "name": "민준",
+        "age": 28,
+        "region": "서울특별시",
+        "disability_type": "자폐성장애",
+        "registered": true,
+        "severity": "심한 장애",
+        "employment": "취업 중",
+        "care_need": "필요 없음",
+        "using_programs": [],
+        "job_goal": "",
+        "income_items": [{"name": "근로소득", "amount": 1200000, "source": "예시"}],
+        "expense_items": [{"name": "생활비", "amount": 1000000, "source": "예시"}],
+        "monthly_income": 1200000,
+        "monthly_expense": 1000000,
+        "savings": 3000000,
+        "family_monthly_saving": 0,
+        "goal_year": 2031,
+        "goal_amount": 20000000,
+        "monthly_saving_wish": 300000,
+        "parent_living_support": 0,
+        "parent_support_years": 0
+      },
+      "sim_defaults": {
+        "job_start_year": null,
+        "job_start_month": null,
+        "expected_salary": 0,
+        "job_extra_expense": 0,
+        "independent_living_cost": 1300000
+      },
+      "household": null
+    }
+  ]
+}
