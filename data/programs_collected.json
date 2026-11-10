@@ -1,6 +1,6 @@
 {
   "meta": {
-    "collected_at": "2026-11-10T10:19+00:00",
+    "collected_at": "2026-11-10T10:21+00:00",
     "source": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
     "snapshot": "uddi:e02ed092-d46d-4bf2-8e7e-c3441e950fef",
     "fetched": 461,
@@ -54,7 +54,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000025",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -91,7 +91,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000026",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -130,7 +130,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000027",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -172,7 +172,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000064",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -214,7 +214,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000065",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -251,7 +251,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000066",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -288,7 +288,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000067",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -325,7 +325,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000068",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -362,7 +362,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000090",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -399,7 +399,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000099",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -436,7 +436,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00000104",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -475,7 +475,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001021",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -512,7 +512,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001062",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -551,7 +551,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001067",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -588,7 +588,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001070",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -625,7 +625,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001075",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -666,7 +666,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001090",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -703,7 +703,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001093",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -740,7 +740,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001117",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -779,7 +779,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001121",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -816,7 +816,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001133",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -855,7 +855,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001136",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -896,7 +896,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001143",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -938,7 +938,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001150",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -979,7 +979,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001151",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1021,7 +1021,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001154",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1058,7 +1058,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001167",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1102,7 +1102,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001178",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1139,7 +1139,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001187",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1176,7 +1176,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003170",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1213,7 +1213,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003173",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1250,7 +1250,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003174",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1287,7 +1287,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003181",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1326,7 +1326,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003183",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1365,7 +1365,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003189",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1402,7 +1402,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003195",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1441,7 +1441,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003198",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1478,7 +1478,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003210",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1515,7 +1515,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003211",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1552,7 +1552,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003217",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1589,7 +1589,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003220",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1628,7 +1628,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003258",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1667,7 +1667,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003259",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1706,7 +1706,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003262",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1743,7 +1743,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003265",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1780,7 +1780,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003278",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1817,7 +1817,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003279",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1854,7 +1854,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00003282",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1897,7 +1897,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00004654",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1934,7 +1934,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00004655",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -1971,7 +1971,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00005024",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2013,7 +2013,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00005031",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2050,7 +2050,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00005034",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2087,7 +2087,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00005853",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2126,7 +2126,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00006251",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2168,7 +2168,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00006253",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2205,7 +2205,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00006257",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2242,7 +2242,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00006260",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2281,7 +2281,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00006294",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2320,7 +2320,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00006297",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2357,7 +2357,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00006299",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2402,7 +2402,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00006317",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2439,7 +2439,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00006334",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
@@ -2480,7 +2480,7 @@
         "type": "collected",
         "name": "공공데이터포털 · 한국사회보장정보원 복지서비스정보",
         "serv_id": "WLF00001153",
-        "fetched_at": "2026-11-10T10:19+00:00",
+        "fetched_at": "2026-11-10T10:21+00:00",
         "verified": false,
         "extractor": "rules"
       }
