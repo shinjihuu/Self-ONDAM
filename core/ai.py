@@ -69,14 +69,14 @@ def provider_label() -> str:
     return f"{p['name']} · {p['model'].split('/')[-1]}"
 
 
-def _call(p: dict, user_prompt: str, max_tokens: int) -> str:
+def _call(p: dict, user_prompt: str, max_tokens: int, system: str = SYSTEM_PROMPT) -> str:
     from openai import OpenAI
     client = OpenAI(api_key=p["api_key"], base_url=p["base_url"], timeout=40, max_retries=1)
     resp = client.chat.completions.create(
         model=p["model"],
-        messages=[{"role": "system", "content": SYSTEM_PROMPT},
+        messages=[{"role": "system", "content": system},
                   {"role": "user", "content": user_prompt}],
-        temperature=0.3,
+        temperature=0.2,
         max_tokens=max_tokens,
     )
     text = (resp.choices[0].message.content or "").strip()
@@ -85,17 +85,23 @@ def _call(p: dict, user_prompt: str, max_tokens: int) -> str:
     return text
 
 
-def _chat(user_prompt: str, max_tokens: int = 600) -> str | None:
+def _chat(user_prompt: str, max_tokens: int = 600, system: str = SYSTEM_PROMPT) -> str | None:
     """OpenAI → Hugging Face 순서로 시도. 모두 실패하면 None (규칙 기반 문장으로 대체)."""
     global LAST_PROVIDER
     for p in providers():
         try:
-            text = _call(p, user_prompt, max_tokens)
+            text = _call(p, user_prompt, max_tokens, system=system)
             LAST_PROVIDER = p["name"]
             return text
         except Exception:  # 키 오류·한도 초과·네트워크 오류 → 다음 AI로
             continue
     return None
+
+
+def complete(prompt: str, system: str, max_tokens: int = 700) -> tuple[str | None, str | None]:
+    """에이전트용 범용 호출. (응답, 응답한 AI 이름)"""
+    out = _chat(prompt, max_tokens, system=system)
+    return out, (LAST_PROVIDER if out else None)
 
 
 def _profile_brief(p: dict) -> str:

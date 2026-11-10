@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 테스트용 샘플: 공공데이터포털 중앙부처복지서비스 목록 응답 형식. 실제 제도가 아닙니다. -->
+<wantedList>
+  <totalCount>6</totalCount><pageNo>1</pageNo><numOfRows>50</numOfRows>
+  <resultCode>0</resultCode><resultMessage>SUCCESS</resultMessage>
+  <servList><servId>S001</servId><servNm>[샘플] 장애인 자립수당</servNm><jurMnofNm>보건복지부</jurMnofNm><jurOrgNm>장애인정책과</jurOrgNm><servDgst>중증장애인의 생활 안정을 위해 매월 수당을 지급합니다.</servDgst><srvPvsnNm>현금지급</srvPvsnNm><trgterIndvdlArray>장애인</trgterIndvdlArray><servDtlLink>https://www.bokjiro.go.kr/sample/S001</servDtlLink><rprsCtadr>129</rprsCtadr></servList>
+  <servList><servId>S002</servId><servNm>[샘플] 발달장애인 낮활동 바우처</servNm><jurMnofNm>보건복지부</jurMnofNm><servDgst>성인 발달장애인의 낮 시간 활동을 지원합니다.</servDgst><srvPvsnNm>전자바우처</srvPvsnNm><trgterIndvdlArray>장애인</trgterIndvdlArray></servList>
+  <servList><servId>S003</servId><servNm>[샘플] 장애인 근로자 출퇴근 지원</servNm><jurMnofNm>고용노동부</jurMnofNm><servDgst>중증장애인 근로자의 출퇴근 비용을 지원합니다.</servDgst><srvPvsnNm>서비스</srvPvsnNm><trgterIndvdlArray>장애인</trgterIndvdlArray></servList>
+  <servList><servId>S004</servId><servNm>장애인연금</servNm><jurMnofNm>보건복지부</jurMnofNm><servDgst>중증장애인에게 연금을 지급합니다.</servDgst><srvPvsnNm>현금지급</srvPvsnNm><trgterIndvdlArray>장애인</trgterIndvdlArray></servList>
+  <servList><servId>S005</servId><servNm>[샘플] 청년 문화패스</servNm><jurMnofNm>문화체육관광부</jurMnofNm><servDgst>청년의 공연 관람을 지원합니다.</servDgst><srvPvsnNm>이용권</srvPvsnNm><trgterIndvdlArray>청년</trgterIndvdlArray></servList>
+  <servList><servId>S006</servId><servNm>[샘플] 장애인 자산형성 통장</servNm><jurMnofNm>보건복지부</jurMnofNm><servDgst>근로 중인 장애 청년의 저축에 정부가 매칭 적립합니다.</servDgst><srvPvsnNm>현금지급</srvPvsnNm><trgterIndvdlArray>장애인</trgterIndvdlArray></servList>
+</wantedList>

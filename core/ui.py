@@ -119,6 +119,7 @@ section[data-testid="stSidebar"] .stRadio label p {{ font-size: calc(1rem * var(
 .b-cash {{ background:{c['peach']}; color:{c['coral_dark']}; }}
 .b-care {{ background:{c['lavender']}; color:{c['lav_dark']}; }}
 .b-job {{ background:{c['sky']}; color:{c['sky_dark']}; }}
+.b-fin {{ background:{c['butter']}; color:{c['butter_dark']}; }}
 .b-assume {{ background:#FFE8EC; color:#C0536B; }}
 .b-ok {{ background:{c['mint']}; color:#2F7A5D; }}
 
@@ -203,7 +204,8 @@ def badge(text: str, kind: str) -> str:
 
 
 STATUS_BADGE = {"우선 확인": "pri", "추가 정보 필요": "more", "현재 조건과 맞지 않음": "no"}
-TYPE_BADGE = {"cash": ("현금지원", "cash"), "care": ("돌봄·활동 서비스", "care"), "employment": ("고용 서비스", "job")}
+TYPE_BADGE = {"cash": ("현금지원", "cash"), "care": ("돌봄·활동 서비스", "care"), "employment": ("고용 서비스", "job"),
+              "finance": ("금융·자산형성", "fin")}
 
 
 def note(text: str, tone: str = "warm") -> None:

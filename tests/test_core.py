@@ -142,7 +142,7 @@ def test_fallback_to_hf_when_openai_fails(monkeypatch):
     monkeypatch.setenv("HF_TOKEN", "hf_x")
     calls = []
 
-    def fake_call(p, prompt, max_tokens):
+    def fake_call(p, prompt, max_tokens, **kw):
         calls.append(p["name"])
         if p["name"] == "OpenAI":
             raise RuntimeError("quota")
@@ -156,7 +156,7 @@ def test_fallback_to_hf_when_openai_fails(monkeypatch):
 def test_rule_fallback_when_all_fail(monkeypatch):
     _clear_env(monkeypatch)
     monkeypatch.setenv("HF_TOKEN", "hf_x")
-    monkeypatch.setattr(ai, "_call", lambda *a: (_ for _ in ()).throw(RuntimeError("down")))
+    monkeypatch.setattr(ai, "_call", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("down")))
     progs = json.loads((DATA / "programs.json").read_text(encoding="utf-8"))["programs"]
     text, by = ai.answer_question("장애인연금 신청은 어디서 해요?", {}, progs)
     assert by is False and "장애인연금" in text

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 테스트용 샘플 상세 응답. 실제 제도가 아닙니다. -->
+<wantedDtl><resultCode>0</resultCode><resultMessage>SUCCESS</resultMessage>
+<servId>S002</servId><tgtrDtlCn>만 18세 ~ 64세 발달장애인 (지적장애, 자폐성장애)</tgtrDtlCn><slctCritCn>장애인복지법에 따른 등록 장애인</slctCritCn><alwServCn>낮 시간 그룹 활동 바우처 제공
+보호자 돌봄 부담 완화</alwServCn>
+<applmetList><servSeCode>010</servSeCode><servSeDetailLink></servSeDetailLink><servSeDetailNm>주소지 읍·면·동 행정복지센터 방문 신청</servSeDetailNm></applmetList>
+<inqplCtadrList><servSeCode>020</servSeCode><servSeDetailLink>129</servSeDetailLink><servSeDetailNm>보건복지상담센터</servSeDetailNm></inqplCtadrList>
+</wantedDtl>

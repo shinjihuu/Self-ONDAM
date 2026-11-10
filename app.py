@@ -12,14 +12,16 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from core import ai, eligibility as el, finance as fin, household as hh, ui
+from core.agents.recommender import RecommenderAgent
 from core.ui import COLORS, SERIES, esc
 
 st.set_page_config(page_title="자립ON · AI 자립설계 길잡이", page_icon="🌱", layout="wide",
                    initial_sidebar_state="auto")
 
 DATA = Path(__file__).parent / "data"
-PROGRAMS_DB = json.loads((DATA / "programs.json").read_text(encoding="utf-8"))
-PROGRAMS = {p["id"]: p for p in PROGRAMS_DB["programs"]}
+# 추천 에이전트: 수작업 검수 제도(programs.json) + 수집 에이전트 결과(programs_collected.json)
+RECOMMENDER, CATALOG_INFO = RecommenderAgent.from_files(st.session_state.get("include_collected", True))
+PROGRAMS = RECOMMENDER.by_id
 PERSONAS = {p["id"]: p for p in json.loads((DATA / "personas.json").read_text(encoding="utf-8"))["personas"]}
 
 PAGES = ["① 나의 자립 진단", "② AI 맞춤 지원", "③ 미래 자립 시뮬레이터"]
@@ -53,7 +55,7 @@ def load_persona(pid: str) -> None:
 def get_selected(p: dict) -> dict:
     """시뮬레이터에 담은 제도 (페이지 이동 후에도 유지)."""
     if st.session_state.get("selected") is None:
-        st.session_state.selected = {r.program_id: r.status != el.NO_MATCH for r in el.recommend(p)}
+        st.session_state.selected = {r.program_id: r.status != el.NO_MATCH for r in RECOMMENDER.recommend(p)}
     return st.session_state.selected
 
 
@@ -87,6 +89,8 @@ with st.sidebar:
     st.button("이 사례로 시작하기", on_click=load_persona, args=(pid,), width="stretch")
     st.divider()
     st.toggle("🔍 큰 글씨로 보기", key="large_text")
+    st.toggle("📡 자동 수집 제도도 보기", key="include_collected", value=True,
+              help="수집 에이전트가 공공데이터에서 모은 제도(검수 전)를 추천에 포함해요")
     if ai.ai_available():
         st.markdown(ui.badge("AI 연결됨 · " + ai.provider_label(), "ok"), unsafe_allow_html=True)
         if len(ai.providers()) > 1:
@@ -198,7 +202,7 @@ def diagnosis_form() -> None:
     ui.section("진단 요약", "coral", "입력한 정보를 바탕으로 계산했어요")
     surplus = p["monthly_income"] - p["monthly_expense"]
     months_left = fin.months_between(TODAY.year, TODAY.month, p["goal_year"], 1)
-    recs = el.recommend(p)
+    recs = RECOMMENDER.recommend(p)
     n_pri = sum(r.status == el.PRIORITY for r in recs)
     ui.tiles([
         ("월 수입", man(p["monthly_income"]), " · ".join(i["name"].split(" (")[0] for i in p["income_items"]) or "-", "peach"),
@@ -321,13 +325,34 @@ def cached_explain(profile_json: str, program_id: str, rec_json: str) -> tuple[s
                                      SimpleNamespace(**json.loads(rec_json)))
 
 
+def agent_panel() -> None:
+    """수집 에이전트 → 추천 에이전트 흐름과 현재 데이터 상태."""
+    meta = CATALOG_INFO["collected_meta"]
+    when = (meta.get("collected_at") or "")[:16].replace("T", " ")
+    status = (f"마지막 수집 {when} · 수집 {CATALOG_INFO['collected_available']}개 중 {CATALOG_INFO['collected_used']}개 사용"
+              if when else "아직 수집 전 (GitHub Actions에서 수집 에이전트를 실행하면 채워져요)")
+    with st.expander(f"🤖 두 에이전트가 함께 일해요 · 제도 {len(PROGRAMS)}개 (검수 {CATALOG_INFO['curated']} + 자동 수집 {CATALOG_INFO['collected_used']})"):
+        step = lambda ico, t, d, bg: (f'<div style="flex:1;min-width:170px;background:{bg};border-radius:16px;padding:12px 14px">'
+                                      f'<div style="font-size:1.4rem">{ico}</div><b>{t}</b>'
+                                      f'<div style="font-size:.8rem;color:#6B5A52;margin-top:2px">{d}</div></div>')
+        arrow = '<div style="align-self:center;color:#D2694B;font-weight:800">→</div>'
+        st.markdown('<div style="display:flex;gap:8px;flex-wrap:wrap">' + arrow.join([
+            step("🏛️", "공식 데이터", "공공데이터포털 · 한국사회보장정보원 복지서비스 API", "#EEF5FC"),
+            step("📡", "수집 에이전트", "매주 자동 실행 · 장애인 대상 선별 · 재무/비재무 분류 · 자격조건 구조화(규칙+AI)", "#F4EFFB"),
+            step("🗂️", "제도 카탈로그", "수작업 검수 5개 + 자동 수집(검수 전)", "#FFF8E1"),
+            step("🧭", "추천 에이전트", "규칙 엔진으로 판정 → AI가 이유·다음 할 일 설명", "#FFF1EA"),
+        ]) + "</div>", unsafe_allow_html=True)
+        st.caption(f"📡 {status}")
+        st.caption("🛡️ 자동 수집 제도는 사람이 검수하기 전까지 ‘우선 확인’으로 올리지 않아요. AI는 자격을 판정하지 않고 설명만 해요.")
+
+
 def page_support() -> None:
     p = profile
     ui.hero("STEP 2 · AI 맞춤 지원 추천", f"{esc(p['name'])} 님께 맞는 지원을 찾았어요",
             "자격 조건은 규칙으로 꼼꼼히 확인하고, AI가 추천 이유와 다음 할 일을 쉬운 말로 알려드려요.")
     ui.stepper(1)
 
-    recs = el.recommend(p)
+    recs = RECOMMENDER.recommend(p)
     sel = get_selected(p)
     chips = " ".join(ui.badge(x, "no") for x in
                      [f"만 {p['age']}세", p["region"], p["disability_type"], p["severity"], p["employment"], f"돌봄 {p['care_need']}"])
@@ -339,6 +364,7 @@ def page_support() -> None:
         ("💤 현재 조건과 맞지 않음", f"{cnt[el.NO_MATCH]}개", "상황이 바뀌면 다시 확인", "lav"),
     ])
 
+    agent_panel()
     flt = st.radio("보기", ["전체", "재무적 지원", "비재무적 지원"], horizontal=True, label_visibility="collapsed")
     pjson = json.dumps(p, ensure_ascii=False, sort_keys=True, default=str)
 
@@ -351,9 +377,13 @@ def page_support() -> None:
             badges = ui.badge(r.status, ui.STATUS_BADGE[r.status]) + ui.badge(tlabel, tkind)
             if r.in_use:
                 badges += ui.badge("이용 중", "ok")
+            agency = esc(prog["agency"])
+            if not r.verified:
+                badges += ui.badge("자동 수집 · 검수 전", "assume")
+                agency += f' · 수집 {esc(str(prog["source"].get("fetched_at", ""))[:10])}'
             st.markdown(f'<div class="card-title" style="flex-wrap:wrap"><div class="ico soft-peach">{prog["icon"]}</div>'
                         f'{esc(prog["name"])} <span style="margin-left:6px">{badges}</span>'
-                        f'<span style="margin-left:auto;font-size:.8rem;color:#8C7B73;font-weight:500">{esc(prog["agency"])}</span></div>',
+                        f'<span style="margin-left:auto;font-size:.8rem;color:#8C7B73;font-weight:500">{agency}</span></div>',
                         unsafe_allow_html=True)
             left, right = st.columns([1.35, 1], gap="large")
             with left:
@@ -380,12 +410,12 @@ def page_support() -> None:
                         on_change=_toggle_sel, args=(r.program_id,))
 
     selected = [pid for pid in PROGRAMS if sel.get(pid)]
-    warns = el.overlap_warnings(p, selected)
+    warns = RECOMMENDER.selected_warnings(p, selected)
     if warns:
         ui.section("함께 이용할 때 주의할 점", "butter_dark")
         for w in warns:
             ui.note("⚠️ " + esc(w), "warm")
-    ui.note("ⓘ " + esc(PROGRAMS_DB["meta"]["notice"]), "lav")
+    ui.note("ⓘ " + esc(CATALOG_INFO["notice"]), "lav")
 
     ui.section("AI 길잡이에게 물어보기", "lav_dark", "공식 안내 자료 범위 안에서 답해요")
     hist = st.session_state.setdefault("qa_history", [])
@@ -409,7 +439,7 @@ def page_support() -> None:
     question = preset or (q if ask and q.strip() else None)
     if question:
         with st.spinner("공식 자료를 찾아보고 있어요..."):
-            ans, by_ai = ai.answer_question(question, p, list(PROGRAMS.values()))
+            ans, by_ai = RECOMMENDER.answer(question, p)
         hist.append((question, ans, by_ai))
         st.rerun()
 
@@ -482,7 +512,10 @@ def page_simulator() -> None:
                     if red:
                         supports.append(fin.SupportItem(prog["name"], "expense", int(red)))
                 else:
-                    st.caption("취업지원·근로지원인은 수입이 아니에요. 아래 **취업 가정**에서 예상 급여를 따로 입력해요.")
+                    if prog["support_type"] == "finance":
+                        st.caption("저축 매칭·자산형성 제도는 지원금이 아니에요. ③ 예금·적금 운용에서 금리·저축액 가정으로 비교해요.")
+                    else:
+                        st.caption("취업지원·근로지원인은 수입이 아니에요. 아래 **취업 가정**에서 예상 급여를 따로 입력해요.")
 
         if st.toggle("➕ 가상 현금지원 시나리오 추가 (기획서 예시: 월 35만 원)", key="sim_virtual"):
             a, b = st.columns(2)
@@ -766,7 +799,7 @@ def make_report(p: dict, s: dict, plans, period: int, supports) -> str:
              "## 현재 상태", f"- 월 수입 {man(p['monthly_income'])} / 월 지출 {man(p['monthly_expense'])}",
              f"- 이용 중 제도: {', '.join(PROGRAMS[x]['name'] for x in p['using_programs']) or '없음'}", "",
              "## 추천 지원제도"]
-    for r in el.recommend(p):
+    for r in RECOMMENDER.recommend(p):
         lines.append(f"- [{r.status}] {PROGRAMS[r.program_id]['name']} — {PROGRAMS[r.program_id]['apply']}")
     lines += ["", "## 현금흐름", f"- 현재 월 잉여 {man(s['before_monthly'])} → 지원 후 {man(s['after_monthly'])}"
               + (f" → 취업 후(가정) {man(s['job_monthly'])}" if s["job_monthly"] is not None else ""),

@@ -1,0 +1,45 @@
+name: 지원제도 수집 에이전트
+
+on:
+  schedule:
+    - cron: "17 18 * * 0"   # 매주 월요일 03:17 (한국 시간)
+  workflow_dispatch:         # Actions 탭에서 직접 실행
+    inputs:
+      limit:
+        description: "가져올 제도 수"
+        default: "40"
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt pytest
+
+      - name: 수집 에이전트 실행
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python -m core.agents.collector --limit "${{ github.event.inputs.limit || '40' }}"
+
+      - name: 테스트 (수집 결과로 앱 계산이 깨지지 않는지)
+        run: python -m pytest -q
+
+      - name: 변경 사항 커밋
+        run: |
+          git config user.name "jariphon-collector[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/programs_collected.json
+          if git diff --cached --quiet; then
+            echo "변경 없음"
+          else
+            git commit -m "수집 에이전트: 지원제도 데이터 갱신 ($(date +%Y-%m-%d))"
+            git push
+          fi

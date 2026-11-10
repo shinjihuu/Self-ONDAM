@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "collected_at": null,
+    "source": "공공데이터포털 · 한국사회보장정보원 중앙부처복지서비스",
+    "fetched": 0,
+    "kept": 0,
+    "skipped_duplicates": 0,
+    "skipped_off_target": 0,
+    "by_type": {},
+    "notice": "아직 수집 전이에요. GitHub Actions의 「지원제도 수집 에이전트」를 실행하면 이 파일이 채워집니다."
+  },
+  "programs": []
+}

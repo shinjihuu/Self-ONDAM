@@ -22,6 +22,39 @@ AFPK 영 플래너 챌린지 · 4일 개발 MVP
 - 자립 후 가족 생활지원 월 70만 원 × 10년 (8,400만 원)
 - 보고서는 딸의 근로소득을 반영하지 않았으므로, 자립ON은 **‘취업 가정’ 시나리오를 따로** 보여줍니다.
 
+## 두 에이전트 구조
+
+```
+공공데이터포털 API ──▶ 📡 수집 에이전트 ──▶ 🗂️ 제도 카탈로그 ──▶ 🧭 추천 에이전트 ──▶ 사용자
+(한국사회보장정보원      (매주 GitHub Actions)    programs.json (검수 5개)     규칙 판정 → AI 설명
+ 중앙부처복지서비스)                              programs_collected.json (자동 수집, 검수 전)
+```
+
+### 📡 수집 에이전트 (`core/agents/collector.py`)
+1. **수집**: 공공데이터포털 「한국사회보장정보원_중앙부처복지서비스」 목록·상세 API를 호출해요.
+2. **선별**: 장애인 대상 제도만 남기고, 직접 검수한 5개 제도와 이름이 겹치면 빼요.
+3. **분류**: 제공유형과 본문으로 현금지원·금융(자산형성) → **재무적 지원**, 돌봄·고용 → **비재무적 지원**으로 나눠요.
+4. **구조화**: 지원대상·선정기준 문장에서 나이, 장애유형, 장애정도, 취업상태 조건을 규칙으로 뽑아요. AI가 연결돼 있으면 한 번 더 다듬고, AI 결과는 허용된 키·값만 남기는 검증을 거쳐요.
+5. **저장**: `data/programs_collected.json`에 출처(servId, 수집 시각, 추출 방식)와 함께 **검수 전**으로 저장해요.
+
+### 🧭 추천 에이전트 (`core/agents/recommender.py`)
+- 수작업 검수 제도와 자동 수집 제도를 합쳐 카탈로그를 만들어요. 이름이 겹치면 검수본이 우선이에요.
+- 모든 제도를 같은 규칙 엔진(`core/eligibility.py`)으로 판정해요. 결과는 우선 확인, 추가 정보 필요, 현재 조건과 맞지 않음 중 하나예요.
+- **검수 전 제도는 ‘우선 확인’으로 올리지 않아요.** AI는 판정하지 않고 추천 이유와 다음 할 일만 설명해요.
+- 질문하면 관련 제도만 골라 근거로 넘겨서 답변해요.
+
+### 수집 에이전트 켜는 법
+1. [공공데이터포털](https://www.data.go.kr)에서 「한국사회보장정보원_중앙부처복지서비스」를 활용신청하고 **일반 인증키(Decoding)**를 복사해요. 무료이고, 보통 바로 승인돼요.
+2. GitHub 레포 **Settings → Secrets and variables → Actions → New repository secret**에 `DATA_GO_KR_KEY`를 추가해요. AI로 조건을 다듬으려면 `HF_TOKEN`도 추가해요.
+3. **Actions → 지원제도 수집 에이전트 → Run workflow**로 바로 실행해요. 이후에는 매주 월요일 새벽에 자동 실행되고, 결과가 커밋되면 Streamlit 앱에 자동 반영돼요.
+
+로컬 실행:
+
+```bash
+DATA_GO_KR_KEY=... python -m core.agents.collector --limit 40
+python -m core.agents.collector --from-dir tests/fixtures/bokjiro --no-llm   # 샘플 응답으로 실행
+```
+
 ## 계산 원칙
 
 1. 지원 대상 여부와 실제 수급 확정을 구분합니다. 확인되지 않은 지원금은 ‘가정 시나리오’로 표시합니다.
@@ -65,13 +98,16 @@ GitHub에 올린 뒤 share.streamlit.io에서 `app.py`를 지정하고, Settings
 ```
 app.py                 화면 3개 · 라우팅
 core/finance.py        현금흐름 · 예금 · 적금 · 목표 계산
-core/eligibility.py    지원제도 규칙 판정 · 중복 경고
+core/eligibility.py    조건(criteria) 기반 범용 판정 엔진 · 중복 경고
+core/agents/collector.py   수집 에이전트 (공공데이터 → 구조화)
+core/agents/recommender.py 추천 에이전트 (판정 · 설명 · 질의응답)
 core/household.py      가족 재무비율 (AFPK 3단계)
 core/ai.py             AI 설명 · Q&A (OpenAI → Hugging Face → 규칙 기반)
 core/ui.py             파스텔 테마 CSS · 컴포넌트
-data/programs.json     지원제도 5개 (공식 출처 링크)
+data/programs.json     수작업 검수 지원제도 5개 (구조화된 자격조건 포함)
+data/programs_collected.json  수집 에이전트 결과 (검수 전)
 data/personas.json     공모전 사례 · 예시 사용자
-tests/test_core.py     계산 검증 테스트
+tests/                 계산 · 판정 · 에이전트 테스트 (샘플 API 응답 포함)
 ```
 
 > 지원 내용·금액·기준은 매년 바뀝니다. 이 서비스는 수급 여부를 확정하지 않습니다.

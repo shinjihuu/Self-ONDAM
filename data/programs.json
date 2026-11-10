@@ -1,7 +1,8 @@
 {
   "meta": {
     "updated": "2026-11",
-    "notice": "지원 내용·금액·기준은 매년 바뀔 수 있습니다. 신청 전 반드시 공식 기관에서 최신 기준을 확인하세요. 이 서비스는 수급 여부를 확정하지 않습니다."
+    "notice": "지원 내용·금액·기준은 매년 바뀔 수 있습니다. 신청 전 반드시 공식 기관에서 최신 기준을 확인하세요. 이 서비스는 수급 여부를 확정하지 않습니다.",
+    "schema": "criteria: registered(required|preferred), min_age, max_age, disability_types, severity, employment_required, employment_priority, employment_restricted, care_need_required, income_max_ref"
   },
   "programs": [
     {
@@ -30,9 +31,33 @@
       "apply": "주소지 읍·면·동 행정복지센터 방문 또는 복지로 온라인 신청",
       "contact": "보건복지상담센터 ☎ 129 · 국민연금공단 ☎ 1355",
       "links": [
-        {"label": "복지로 · 장애인연금", "url": "https://www.bokjiro.go.kr"},
-        {"label": "국민연금공단 장애인연금 안내", "url": "https://www.nps.or.kr"}
-      ]
+        {
+          "label": "복지로 · 장애인연금",
+          "url": "https://www.bokjiro.go.kr"
+        },
+        {
+          "label": "국민연금공단 장애인연금 안내",
+          "url": "https://www.nps.or.kr"
+        }
+      ],
+      "criteria": {
+        "registered": "required",
+        "min_age": 18,
+        "severity": "심한 장애",
+        "income_max_ref": 2280000,
+        "income_ref_note": "2025년 단독가구 선정기준액 228만 원(참고값, 매년 변경)",
+        "checks": [
+          "재산을 포함한 ‘소득인정액’ 심사가 필요합니다 (보유 저축액도 반영)."
+        ],
+        "future": {
+          "job_seeking": "취업 후 근로소득이 생기면 소득인정액이 달라져 수급 여부가 바뀔 수 있습니다."
+        }
+      },
+      "source": {
+        "type": "curated",
+        "name": "공식 기관 안내 기반 수작업 정리",
+        "verified": true
+      }
     },
     {
       "id": "activity_support",
@@ -59,9 +84,30 @@
       "apply": "주소지 읍·면·동 행정복지센터 신청 → 국민연금공단 종합조사",
       "contact": "보건복지상담센터 ☎ 129",
       "links": [
-        {"label": "복지로 · 장애인활동지원", "url": "https://www.bokjiro.go.kr"},
-        {"label": "사회서비스 전자바우처", "url": "https://www.socialservice.or.kr"}
-      ]
+        {
+          "label": "복지로 · 장애인활동지원",
+          "url": "https://www.bokjiro.go.kr"
+        },
+        {
+          "label": "사회서비스 전자바우처",
+          "url": "https://www.socialservice.or.kr"
+        }
+      ],
+      "criteria": {
+        "registered": "required",
+        "min_age": 6,
+        "max_age": 64,
+        "care_need_required": true,
+        "checks": [
+          "국민연금공단 ‘서비스지원 종합조사’ 결과로 이용 시간이 정해집니다.",
+          "소득 수준에 따른 본인부담금을 확인하세요."
+        ]
+      },
+      "source": {
+        "type": "curated",
+        "name": "공식 기관 안내 기반 수작업 정리",
+        "verified": true
+      }
     },
     {
       "id": "day_activity",
@@ -88,9 +134,41 @@
       "apply": "주소지 읍·면·동 행정복지센터 신청",
       "contact": "보건복지상담센터 ☎ 129 · 거주지 시·군·구청 장애인복지 담당",
       "links": [
-        {"label": "복지로 · 발달장애인 주간활동서비스", "url": "https://www.bokjiro.go.kr"},
-        {"label": "중앙장애아동·발달장애인지원센터", "url": "https://www.broso.or.kr"}
-      ]
+        {
+          "label": "복지로 · 발달장애인 주간활동서비스",
+          "url": "https://www.bokjiro.go.kr"
+        },
+        {
+          "label": "중앙장애아동·발달장애인지원센터",
+          "url": "https://www.broso.or.kr"
+        }
+      ],
+      "criteria": {
+        "registered": "required",
+        "min_age": 18,
+        "max_age": 64,
+        "disability_types": [
+          "지적장애",
+          "자폐성장애"
+        ],
+        "employment_restricted": [
+          "취업 중",
+          "직업훈련 중"
+        ],
+        "restricted_note": "취업·직업훈련 중인 경우 이용이 제한되거나 조정될 수 있습니다. {region} 기준을 행정복지센터에 확인하세요.",
+        "care_bonus": true,
+        "checks": [
+          "활동지원서비스와 함께 이용 시 활동지원 시간이 일부 차감될 수 있습니다."
+        ],
+        "future": {
+          "not_employed": "취업하면 이용이 제한될 수 있어, 취업 시점에 맞춰 서비스 전환을 계획하세요."
+        }
+      },
+      "source": {
+        "type": "curated",
+        "name": "공식 기관 안내 기반 수작업 정리",
+        "verified": true
+      }
     },
     {
       "id": "kead_employment",
@@ -117,9 +195,36 @@
       "apply": "가까운 한국장애인고용공단 지역본부·지사 방문 또는 워크투게더 온라인 등록",
       "contact": "한국장애인고용공단 ☎ 1588-1519",
       "links": [
-        {"label": "한국장애인고용공단", "url": "https://www.kead.or.kr"},
-        {"label": "워크투게더 (장애인 고용포털)", "url": "https://www.worktogether.or.kr"}
-      ]
+        {
+          "label": "한국장애인고용공단",
+          "url": "https://www.kead.or.kr"
+        },
+        {
+          "label": "워크투게더 (장애인 고용포털)",
+          "url": "https://www.worktogether.or.kr"
+        }
+      ],
+      "criteria": {
+        "registered": "preferred",
+        "min_age": 15,
+        "employment_priority": [
+          "구직 중 (취업 준비)",
+          "미취업",
+          "직업훈련 중"
+        ],
+        "checks": [
+          "직업능력평가 후 맞는 프로그램(지원고용·맞춤훈련 등)이 정해집니다."
+        ],
+        "other_status_note": {
+          "취업 중": "이미 취업 중이라면 고용 유지·직무 적응 지원 위주로 확인하세요.",
+          "학생": "학업 중이라면 졸업 전 진로 연계 프로그램을 확인하세요."
+        }
+      },
+      "source": {
+        "type": "curated",
+        "name": "공식 기관 안내 기반 수작업 정리",
+        "verified": true
+      }
     },
     {
       "id": "work_assistant",
@@ -147,12 +252,38 @@
       "apply": "한국장애인고용공단 지사 신청",
       "contact": "한국장애인고용공단 ☎ 1588-1519",
       "links": [
-        {"label": "한국장애인고용공단 · 근로지원인", "url": "https://www.kead.or.kr"}
-      ]
+        {
+          "label": "한국장애인고용공단 · 근로지원인",
+          "url": "https://www.kead.or.kr"
+        }
+      ],
+      "criteria": {
+        "employment_required": [
+          "취업 중"
+        ],
+        "severity": "심한 장애",
+        "checks": [
+          "핵심 업무는 본인이 할 수 있고, 부수 업무에 지원이 필요한지 확인합니다."
+        ],
+        "future": {
+          "not_employed_severe": "취업 후에는 ‘우선 확인’ 대상이 될 수 있어요. 취업 시점에 다시 확인하세요."
+        }
+      },
+      "source": {
+        "type": "curated",
+        "name": "공식 기관 안내 기반 수작업 정리",
+        "verified": true
+      }
     }
   ],
   "finance_refs": [
-    {"label": "금융감독원 금융상품 한눈에 (예·적금 금리 비교)", "url": "https://finlife.fss.or.kr"},
-    {"label": "국가법령정보센터 · 조세특례제한법 제88조의2 (비과세종합저축)", "url": "https://www.law.go.kr"}
+    {
+      "label": "금융감독원 금융상품 한눈에 (예·적금 금리 비교)",
+      "url": "https://finlife.fss.or.kr"
+    },
+    {
+      "label": "국가법령정보센터 · 조세특례제한법 제88조의2 (비과세종합저축)",
+      "url": "https://www.law.go.kr"
+    }
   ]
 }
